@@ -1,0 +1,4996 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Panel - Custom Web</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      :root {
+        --primary-color: #4f46e5;
+        --text-color: #333;
+        --bg-color: #fff;
+        --secondary-bg: #f9fafb;
+        --border-color: #e5e7eb;
+        --success-color: #10b981;
+        --error-color: #ef4444;
+        --warning-color: #f59e0b;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        line-height: 1.6;
+        color: var(--text-color);
+        background-color: var(--secondary-bg);
+      }
+
+      .admin-container {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      .sidebar {
+        width: 250px;
+        background-color: var(--bg-color);
+        border-right: 1px solid var(--border-color);
+        padding: 1.5rem;
+        position: fixed;
+        height: 100vh;
+        overflow-y: auto;
+        z-index: 10;
+      }
+
+      .sidebar-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 2rem;
+      }
+
+      .sidebar-logo {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 0.75rem;
+      }
+
+      .sidebar-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--text-color);
+      }
+
+      .sidebar-nav {
+        list-style: none;
+      }
+
+      .sidebar-nav-item {
+        margin-bottom: 0.5rem;
+      }
+
+      .sidebar-nav-link {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem;
+        border-radius: 0.5rem;
+        color: #666;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+      }
+
+      .sidebar-nav-link:hover,
+      .sidebar-nav-link.active {
+        background-color: var(--secondary-bg);
+        color: var(--primary-color);
+      }
+
+      .sidebar-nav-icon {
+        margin-right: 0.75rem;
+        width: 20px;
+        text-align: center;
+      }
+
+      .main-content {
+        flex: 1;
+        margin-left: 250px;
+        padding: 2rem;
+      }
+
+      .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .page-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-color);
+      }
+
+      .logout-button {
+        display: inline-flex;
+        align-items: center;
+        background-color: transparent;
+        color: #666;
+        border: 1px solid var(--border-color);
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .logout-button:hover {
+        background-color: #fee2e2;
+        color: var(--error-color);
+        border-color: var(--error-color);
+      }
+
+      .logout-icon {
+        margin-right: 0.5rem;
+      }
+
+      .card {
+        background-color: var(--bg-color);
+        border-radius: 0.75rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+      }
+
+      .card-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-color);
+      }
+
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: var(--text-color);
+      }
+
+      .form-input,
+      .form-textarea,
+      .form-select {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid var(--border-color);
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        transition: border-color 0.3s ease;
+      }
+
+      .form-textarea {
+        min-height: 150px;
+        resize: vertical;
+      }
+
+      .form-input:focus,
+      .form-textarea:focus,
+      .form-select:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+      }
+
+      .color-input-container {
+        display: flex;
+        align-items: center;
+      }
+
+      .color-preview {
+        width: 40px;
+        height: 40px;
+        border-radius: 0.5rem;
+        margin-right: 1rem;
+        border: 1px solid var(--border-color);
+      }
+
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        border: none;
+      }
+
+      .primary-button {
+        background-color: var(--primary-color);
+        color: white;
+      }
+
+      .primary-button:hover {
+        background-color: #4338ca;
+      }
+
+      .secondary-button {
+        background-color: white;
+        color: var(--text-color);
+        border: 1px solid var(--border-color);
+      }
+
+      .secondary-button:hover {
+        background-color: var(--secondary-bg);
+      }
+
+      .danger-button {
+        background-color: #fee2e2;
+        color: var(--error-color);
+        border: 1px solid var(--error-color);
+      }
+
+      .danger-button:hover {
+        background-color: var(--error-color);
+        color: white;
+      }
+
+      .button-icon {
+        margin-right: 0.5rem;
+      }
+
+      .profile-preview {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1.5rem;
+      }
+
+      .profile-image-preview {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 1.5rem;
+        border: 3px solid var(--primary-color);
+      }
+
+      .profile-info-preview {
+        flex: 1;
+      }
+
+      .profile-name-preview {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+      }
+
+      .profile-description-preview {
+        color: #666;
+        font-size: 0.875rem;
+      }
+
+      .image-upload-container {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+      }
+
+      .image-preview {
+        width: 80px;
+        height: 80px;
+        border-radius: 0.5rem;
+        object-fit: cover;
+        margin-right: 1rem;
+        border: 1px solid var(--border-color);
+      }
+
+      .file-input-wrapper {
+        position: relative;
+        overflow: hidden;
+        display: inline-block;
+      }
+
+      .file-input {
+        position: absolute;
+        left: 0;
+        top: 0;
+        opacity: 0;
+        cursor: pointer;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+      }
+
+      .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 1rem;
+        margin-top: 1.5rem;
+      }
+
+      .gallery-item {
+        position: relative;
+        border-radius: 0.5rem;
+        overflow: hidden;
+        aspect-ratio: 3/2;
+      }
+
+      .gallery-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .gallery-item-actions {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        display: flex;
+        gap: 0.5rem;
+        z-index: 5;
+      }
+
+      .gallery-item-button {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.9);
+        color: var(--text-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        border: none;
+        font-size: 0.875rem;
+        transition: all 0.3s ease;
+        z-index: 10;
+      }
+
+      .gallery-item-button:hover {
+        background-color: white;
+        transform: scale(1.1);
+      }
+
+      .gallery-item-button.delete:hover {
+        background-color: var(--error-color);
+        color: white;
+      }
+
+      .add-image-card {
+        border: 2px dashed var(--border-color);
+        border-radius: 0.5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        height: 100%;
+        aspect-ratio: 3/2;
+        position: relative;
+      }
+
+      .add-image-card:hover {
+        border-color: var(--primary-color);
+        background-color: rgba(79, 70, 229, 0.05);
+      }
+
+      .add-image-icon {
+        font-size: 1.5rem;
+        color: #666;
+        margin-bottom: 0.5rem;
+      }
+
+      .add-image-text {
+        font-size: 0.875rem;
+        color: #666;
+      }
+
+      .add-image-input {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+        z-index: 2;
+      }
+
+      .links-list,
+      .services-list,
+      .contact-info-list,
+      .faqs-list,
+      .products-list,
+      .blog-posts-list {
+        margin-top: 1.5rem;
+      }
+
+      .link-item,
+      .service-item,
+      .contact-info-item,
+      .faq-item,
+      .product-item,
+      .blog-post-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem;
+        background-color: var(--secondary-bg);
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
+      }
+
+      .link-info,
+      .service-info,
+      .contact-info-info,
+      .faq-info,
+      .product-info,
+      .blog-post-info {
+        display: flex;
+        align-items: center;
+        flex: 1;
+      }
+
+      .link-icon,
+      .service-icon,
+      .contact-info-icon,
+      .faq-icon,
+      .product-icon,
+      .blog-post-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: var(--primary-color);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+      }
+
+      .link-content,
+      .service-content,
+      .contact-info-content,
+      .faq-content,
+      .product-content,
+      .blog-post-content {
+        flex: 1;
+      }
+
+      .link-text,
+      .service-title,
+      .contact-info-title,
+      .faq-question,
+      .product-title,
+      .blog-post-title {
+        font-weight: 500;
+      }
+
+      .link-url,
+      .service-description,
+      .contact-info-value,
+      .faq-answer,
+      .product-description,
+      .blog-post-date {
+        color: #666;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+      }
+
+      .link-actions,
+      .service-actions,
+      .contact-info-actions,
+      .faq-actions,
+      .product-actions,
+      .blog-post-actions {
+        display: flex;
+        gap: 0.5rem;
+      }
+
+      .add-link-form,
+      .add-service-form,
+      .add-contact-info-form,
+      .add-faq-form,
+      .section-titles-form,
+      .add-product-form,
+      .add-blog-post-form {
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--border-color);
+      }
+
+      .notification {
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        background-color: white;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        max-width: 350px;
+        transform: translateX(calc(100% + 1rem));
+        transition: transform 0.3s ease;
+        z-index: 1000;
+      }
+
+      .notification.show {
+        transform: translateX(0);
+      }
+
+      .notification-icon {
+        margin-right: 0.75rem;
+        font-size: 1.25rem;
+      }
+
+      .notification-content {
+        flex: 1;
+      }
+
+      .notification-title {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+      }
+
+      .notification-message {
+        font-size: 0.875rem;
+        color: #666;
+      }
+
+      .notification.success {
+        border-left: 4px solid var(--success-color);
+      }
+
+      .notification.success .notification-icon {
+        color: var(--success-color);
+      }
+
+      .notification.error {
+        border-left: 4px solid var(--error-color);
+      }
+
+      .notification.error .notification-icon {
+        color: var(--error-color);
+      }
+
+      .loading {
+        display: inline-block;
+        width: 1rem;
+        height: 1rem;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: spin 1s ease-in-out infinite;
+        margin-right: 0.5rem;
+      }
+
+      .switch {
+        position: relative;
+        display: inline-block;
+        width: 50px;
+        height: 24px;
+      }
+
+      .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: 0.4s;
+        border-radius: 24px;
+      }
+
+      .slider:before {
+        position: absolute;
+        content: "";
+        height: 16px;
+        width: 16px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: 0.4s;
+        border-radius: 50%;
+      }
+
+      input:checked + .slider {
+        background-color: var(--primary-color);
+      }
+
+      input:focus + .slider {
+        box-shadow: 0 0 1px var(--primary-color);
+      }
+
+      input:checked + .slider:before {
+        transform: translateX(26px);
+      }
+
+      .icon-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+        max-height: 300px;
+        overflow-y: auto;
+        padding: 0.5rem;
+        border: 1px solid var(--border-color);
+        border-radius: 0.5rem;
+      }
+
+      .icon-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 0.75rem;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .icon-item:hover {
+        background-color: var(--secondary-bg);
+      }
+
+      .icon-item.selected {
+        background-color: rgba(79, 70, 229, 0.1);
+        border: 1px solid var(--primary-color);
+      }
+
+      .icon-preview {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+        color: var(--text-color);
+      }
+
+      .icon-name {
+        font-size: 0.75rem;
+        text-align: center;
+        color: #666;
+      }
+
+      /* New styles for products and blog posts */
+      .product-price {
+        font-weight: 600;
+        color: var(--primary-color);
+        margin-top: 0.25rem;
+      }
+
+      .product-image-preview,
+      .blog-post-image-preview {
+        width: 60px;
+        height: 60px;
+        border-radius: 0.5rem;
+        object-fit: cover;
+        margin-right: 1rem;
+      }
+
+      .blog-post-content-preview {
+        max-height: 100px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-top: 0.5rem;
+        font-size: 0.875rem;
+        color: #666;
+      }
+
+      .tabs {
+        display: flex;
+        border-bottom: 1px solid var(--border-color);
+        margin-bottom: 1.5rem;
+      }
+
+      .tab {
+        padding: 0.75rem 1.5rem;
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+        font-weight: 500;
+        transition: all 0.3s ease;
+      }
+
+      .tab.active {
+        border-bottom-color: var(--primary-color);
+        color: var(--primary-color);
+      }
+
+      .tab-content {
+        display: none;
+      }
+
+      .tab-content.active {
+        display: block;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      @media (max-width: 768px) {
+        .sidebar {
+          width: 100%;
+          height: auto;
+          position: relative;
+          padding: 1rem;
+        }
+
+        .main-content {
+          margin-left: 0;
+          padding: 1rem;
+        }
+
+        .admin-container {
+          flex-direction: column;
+        }
+
+        .sidebar-nav {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.5rem;
+        }
+
+        .sidebar-nav-item {
+          margin-bottom: 0;
+        }
+
+        .sidebar-nav-link {
+          padding: 0.5rem;
+        }
+
+        .sidebar-nav-text {
+          display: none;
+        }
+
+        .sidebar-nav-icon {
+          margin-right: 0;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="admin-container">
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <img
+            src="/images/profile.jpg"
+            alt="Logo"
+            class="sidebar-logo"
+            id="sidebar-logo"
+          />
+          <h1 class="sidebar-title">Admin Panel</h1>
+        </div>
+
+        <ul class="sidebar-nav">
+          <li class="sidebar-nav-item">
+            <a
+              href="#profile"
+              class="sidebar-nav-link active"
+              data-section="profile-section"
+            >
+              <i class="fas fa-user sidebar-nav-icon"></i>
+              <span class="sidebar-nav-text">Profile</span>
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a
+              href="#titles"
+              class="sidebar-nav-link"
+              data-section="titles-section"
+            >
+              <i class="fas fa-heading sidebar-nav-icon"></i>
+              <span class="sidebar-nav-text">Section Titles</span>
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a
+              href="#appearance"
+              class="sidebar-nav-link"
+              data-section="appearance-section"
+            >
+              <i class="fas fa-palette sidebar-nav-icon"></i>
+              <span class="sidebar-nav-text">Appearance</span>
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a
+              href="#gallery"
+              class="sidebar-nav-link"
+              data-section="gallery-section"
+            >
+              <i class="fas fa-images sidebar-nav-icon"></i>
+              <span class="sidebar-nav-text">Gallery</span>
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a
+              href="#services"
+              class="sidebar-nav-link"
+              data-section="services-section"
+            >
+              <i class="fas fa-briefcase sidebar-nav-icon"></i>
+              <span class="sidebar-nav-text">Services</span>
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a
+              href="#products"
+              class="sidebar-nav-link"
+              data-section="products-section"
+            >
+              <i class="fas fa-shopping-cart sidebar-nav-icon"></i>
+              <span class="sidebar-nav-text">Products</span>
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a
+              href="#blog"
+              class="sidebar-nav-link"
+              data-section="blog-section"
+            >
+              <i class="fas fa-blog sidebar-nav-icon"></i>
+              <span class="sidebar-nav-text">Blog</span>
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a
+              href="#blocks"
+              class="sidebar-nav-link"
+              data-section="blocks-section"
+            >
+              <i class="fas fa-th-large sidebar-nav-icon"></i>
+              <span class="sidebar-nav-text">Blocks</span>
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a
+              href="#links"
+              class="sidebar-nav-link"
+              data-section="links-section"
+            >
+              <i class="fas fa-share-alt sidebar-nav-icon"></i>
+              <span class="sidebar-nav-text">Links</span>
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a
+              href="#info"
+              class="sidebar-nav-link"
+              data-section="info-section"
+            >
+              <i class="fas fa-info-circle sidebar-nav-icon"></i>
+              <span class="sidebar-nav-text">Contact Info</span>
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a href="#faq" class="sidebar-nav-link" data-section="faq-section">
+              <i class="fas fa-question-circle sidebar-nav-icon"></i>
+              <span class="sidebar-nav-text">FAQ</span>
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a
+              href="#contact"
+              class="sidebar-nav-link"
+              data-section="contact-section"
+            >
+              <i class="fas fa-envelope sidebar-nav-icon"></i>
+              <span class="sidebar-nav-text">Contact Form</span>
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a
+              href="#order"
+              class="sidebar-nav-link"
+              data-section="order-section"
+            >
+              <i class="fas fa-sort sidebar-nav-icon"></i>
+              <span class="sidebar-nav-text">Section Order</span>
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a
+              href="#custom-code"
+              class="sidebar-nav-link"
+              data-section="custom-code-section"
+            >
+              <i class="fas fa-code sidebar-nav-icon"></i>
+              <span class="sidebar-nav-text">Custom Code</span>
+            </a>
+          </li>
+        </ul>
+      </aside>
+
+      <main class="main-content">
+        <header class="page-header">
+          <h1 class="page-title">Dashboard</h1>
+          <button class="logout-button" id="logout-button">
+            <i class="fas fa-sign-out-alt logout-icon"></i>
+            Logout
+          </button>
+        </header>
+
+        <!-- Profile Section -->
+        <section id="profile-section" class="section">
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Profile Information</h2>
+            </div>
+
+            <div class="profile-preview">
+              <img
+                src="/images/profile.jpg"
+                alt="Profile"
+                class="profile-image-preview"
+                id="profile-image-preview"
+              />
+              <div class="profile-info-preview">
+                <h3 class="profile-name-preview" id="profile-name-preview">
+                  John Doe
+                </h3>
+                <p
+                  class="profile-description-preview"
+                  id="profile-description-preview"
+                >
+                  Welcome to my personal profile!
+                </p>
+              </div>
+            </div>
+
+            <form id="profile-form">
+              <div class="form-group">
+                <label for="profile-image" class="form-label"
+                  >Profile Image</label
+                >
+                <div class="image-upload-container">
+                  <img
+                    src="/images/profile.jpg"
+                    alt="Profile"
+                    class="image-preview"
+                    id="profile-image-upload-preview"
+                  />
+                  <div class="file-input-wrapper">
+                    <button type="button" class="button secondary-button">
+                      <i class="fas fa-upload button-icon"></i>
+                      Choose Image
+                    </button>
+                    <input
+                      type="file"
+                      id="profile-image"
+                      class="file-input"
+                      accept="image/*"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="name" class="form-label">Name</label>
+                <input
+                  type="text"
+                  id="name"
+                  class="form-input"
+                  placeholder="Enter your name"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="description" class="form-label">Description</label>
+                <textarea
+                  id="description"
+                  class="form-textarea"
+                  placeholder="Enter your description"
+                ></textarea>
+              </div>
+
+              <div class="form-group">
+                <label for="logo-image" class="form-label">Logo Image</label>
+                <div class="image-upload-container">
+                  <img
+                    src="/images/logo.png"
+                    alt="Logo"
+                    class="image-preview"
+                    id="logo-preview"
+                  />
+                  <div class="file-input-wrapper">
+                    <button type="button" class="button secondary-button">
+                      <i class="fas fa-upload button-icon"></i>
+                      Choose Logo
+                    </button>
+                    <input
+                      type="file"
+                      id="logo-image"
+                      class="file-input"
+                      accept="image/*"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                class="button primary-button"
+                id="save-profile-button"
+              >
+                <span id="profile-loading" class="loading hidden"></span>
+                <span id="profile-button-text">Save Changes</span>
+              </button>
+            </form>
+          </div>
+        </section>
+
+        <!-- Blocks Section - NEW -->
+        <section id="blocks-section" class="section hidden">
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Blocks</h2>
+            </div>
+
+            <div class="blocks-list" id="blocks-list">
+              <!-- Blocks will be loaded dynamically -->
+            </div>
+
+            <div class="add-block-form">
+              <h3 class="form-title">Add New Block</h3>
+              <form id="add-block-form">
+                <div class="form-group">
+                  <label for="block-title" class="form-label">Title</label>
+                  <input
+                    type="text"
+                    id="block-title"
+                    class="form-input"
+                    placeholder="Enter block title"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="block-text" class="form-label">Text</label>
+                  <textarea
+                    id="block-text"
+                    class="form-textarea"
+                    placeholder="Enter block text"
+                  ></textarea>
+                </div>
+                <div class="form-group">
+                  <label for="block-button-text" class="form-label"
+                    >Button Text</label
+                  >
+                  <input
+                    type="text"
+                    id="block-button-text"
+                    class="form-input"
+                    placeholder="Enter button text"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="block-button-url" class="form-label"
+                    >Button URL</label
+                  >
+                  <input
+                    type="url"
+                    id="block-button-url"
+                    class="form-input"
+                    placeholder="Enter button URL"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="block-bg-color" class="form-label"
+                    >Background Color</label
+                  >
+                  <input
+                    type="color"
+                    id="block-bg-color"
+                    class="form-input"
+                    value="#ffffff"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="block-text-color" class="form-label"
+                    >Text Color</label
+                  >
+                  <input
+                    type="color"
+                    id="block-text-color"
+                    class="form-input"
+                    value="#333333"
+                  />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Image</label>
+                  <div class="image-upload-container">
+                    <img
+                      src="/placeholder.svg"
+                      alt="Block"
+                      class="image-preview"
+                      id="block-image-preview"
+                    />
+                    <div class="file-input-wrapper">
+                      <button type="button" class="button secondary-button">
+                        <i class="fas fa-upload button-icon"></i>
+                        Choose Image
+                      </button>
+                      <input
+                        type="file"
+                        id="block-image"
+                        class="file-input"
+                        accept="image/*"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <button
+                  type="submit"
+                  class="button primary-button"
+                  id="add-block-button"
+                >
+                  <span id="add-block-loading" class="loading hidden"></span>
+                  <span id="add-block-button-text">Add Block</span>
+                </button>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section Titles Section -->
+        <section id="titles-section" class="section hidden">
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Section Titles</h2>
+            </div>
+
+            <form id="section-titles-form" class="section-titles-form">
+              <div class="form-group">
+                <label for="services-section-title" class="form-label"
+                  >Services Section Title</label
+                >
+                <input
+                  type="text"
+                  id="services-section-title"
+                  class="form-input"
+                  placeholder="My Services"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="products-section-title" class="form-label"
+                  >Products Section Title</label
+                >
+                <input
+                  type="text"
+                  id="products-section-title"
+                  class="form-input"
+                  placeholder="My Products"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="blog-section-title" class="form-label"
+                  >Blog Section Title</label
+                >
+                <input
+                  type="text"
+                  id="blog-section-title"
+                  class="form-input"
+                  placeholder="Latest Blog Posts"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="gallery-section-title" class="form-label"
+                  >Gallery Section Title</label
+                >
+                <input
+                  type="text"
+                  id="gallery-section-title"
+                  class="form-input"
+                  placeholder="My Gallery"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="info-section-title" class="form-label"
+                  >Contact Info Section Title</label
+                >
+                <input
+                  type="text"
+                  id="info-section-title"
+                  class="form-input"
+                  placeholder="Contact Information"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="faq-section-title" class="form-label"
+                  >FAQ Section Title</label
+                >
+                <input
+                  type="text"
+                  id="faq-section-title"
+                  class="form-input"
+                  placeholder="Frequently Asked Questions"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="contact-section-title" class="form-label"
+                  >Contact Form Section Title</label
+                >
+                <input
+                  type="text"
+                  id="contact-section-title"
+                  class="form-input"
+                  placeholder="Contact Me"
+                />
+              </div>
+
+              <button
+                type="submit"
+                class="button primary-button"
+                id="save-titles-button"
+              >
+                <span id="titles-loading" class="loading hidden"></span>
+                <span id="titles-button-text">Save Changes</span>
+              </button>
+            </form>
+          </div>
+        </section>
+
+        <!-- Appearance Section -->
+        <section id="appearance-section" class="section hidden">
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Appearance Settings</h2>
+            </div>
+
+            <form id="appearance-form">
+              <div class="form-group">
+                <label for="background-color" class="form-label"
+                  >Background Color</label
+                >
+                <div class="color-input-container">
+                  <div
+                    class="color-preview"
+                    id="background-color-preview"
+                  ></div>
+                  <input
+                    type="color"
+                    id="background-color"
+                    class="form-input"
+                    value="#ffffff"
+                  />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="text-color" class="form-label">Text Color</label>
+                <div class="color-input-container">
+                  <div class="color-preview" id="text-color-preview"></div>
+                  <input
+                    type="color"
+                    id="text-color"
+                    class="form-input"
+                    value="#333333"
+                  />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="accent-color" class="form-label"
+                  >Accent Color</label
+                >
+                <div class="color-input-container">
+                  <div class="color-preview" id="accent-color-preview"></div>
+                  <input
+                    type="color"
+                    id="accent-color"
+                    class="form-input"
+                    value="#4f46e5"
+                  />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="gallery-bg-color" class="form-label"
+                  >Gallery Section Background</label
+                >
+                <div class="color-input-container">
+                  <div
+                    class="color-preview"
+                    id="gallery-bg-color-preview"
+                  ></div>
+                  <input
+                    type="color"
+                    id="gallery-bg-color"
+                    class="form-input"
+                    value="#f9fafb"
+                  />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="services-bg-color" class="form-label"
+                  >Services Section Background</label
+                >
+                <div class="color-input-container">
+                  <div
+                    class="color-preview"
+                    id="services-bg-color-preview"
+                  ></div>
+                  <input
+                    type="color"
+                    id="services-bg-color"
+                    class="form-input"
+                    value="#ffffff"
+                  />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="products-bg-color" class="form-label"
+                  >Products Section Background</label
+                >
+                <div class="color-input-container">
+                  <div
+                    class="color-preview"
+                    id="products-bg-color-preview"
+                  ></div>
+                  <input
+                    type="color"
+                    id="products-bg-color"
+                    class="form-input"
+                    value="#f9fafb"
+                  />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="blog-bg-color" class="form-label"
+                  >Blog Section Background</label
+                >
+                <div class="color-input-container">
+                  <div class="color-preview" id="blog-bg-color-preview"></div>
+                  <input
+                    type="color"
+                    id="blog-bg-color"
+                    class="form-input"
+                    value="#ffffff"
+                  />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="faq-bg-color" class="form-label"
+                  >FAQ Section Background</label
+                >
+                <div class="color-input-container">
+                  <div class="color-preview" id="faq-bg-color-preview"></div>
+                  <input
+                    type="color"
+                    id="faq-bg-color"
+                    class="form-input"
+                    value="#ffffff"
+                  />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="contact-bg-color" class="form-label"
+                  >Contact Form Section Background</label
+                >
+                <div class="color-input-container">
+                  <div
+                    class="color-preview"
+                    id="contact-bg-color-preview"
+                  ></div>
+                  <input
+                    type="color"
+                    id="contact-bg-color"
+                    class="form-input"
+                    value="#f9fafb"
+                  />
+                </div>
+              </div>
+
+              <!-- Section specific text and card colors -->
+              <div class="form-group">
+                <label for="services-text-color" class="form-label"
+                  >Services Text Color</label
+                >
+                <div class="color-input-container">
+                  <div
+                    class="color-preview"
+                    id="services-text-color-preview"
+                  ></div>
+                  <input
+                    type="color"
+                    id="services-text-color"
+                    class="form-input"
+                    value="#333333"
+                  />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="services-card-color" class="form-label"
+                  >Services Card Color</label
+                >
+                <div class="color-input-container">
+                  <div
+                    class="color-preview"
+                    id="services-card-color-preview"
+                  ></div>
+                  <input
+                    type="color"
+                    id="services-card-color"
+                    class="form-input"
+                    value="#f9fafb"
+                  />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="products-text-color" class="form-label"
+                  >Products Text Color</label
+                >
+                <div class="color-input-container">
+                  <div
+                    class="color-preview"
+                    id="products-text-color-preview"
+                  ></div>
+                  <input
+                    type="color"
+                    id="products-text-color"
+                    class="form-input"
+                    value="#333333"
+                  />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="products-card-color" class="form-label"
+                  >Products Card Color</label
+                >
+                <div class="color-input-container">
+                  <div
+                    class="color-preview"
+                    id="products-card-color-preview"
+                  ></div>
+                  <input
+                    type="color"
+                    id="products-card-color"
+                    class="form-input"
+                    value="#ffffff"
+                  />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="blog-text-color" class="form-label"
+                  >Blog Text Color</label
+                >
+                <div class="color-input-container">
+                  <div class="color-preview" id="blog-text-color-preview"></div>
+                  <input
+                    type="color"
+                    id="blog-text-color"
+                    class="form-input"
+                    value="#333333"
+                  />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="blog-card-color" class="form-label"
+                  >Blog Card Color</label
+                >
+                <div class="color-input-container">
+                  <div class="color-preview" id="blog-card-color-preview"></div>
+                  <input
+                    type="color"
+                    id="blog-card-color"
+                    class="form-input"
+                    value="#f9fafb"
+                  />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="faq-text-color" class="form-label"
+                  >FAQ Text Color</label
+                >
+                <div class="color-input-container">
+                  <div class="color-preview" id="faq-text-color-preview"></div>
+                  <input
+                    type="color"
+                    id="faq-text-color"
+                    class="form-input"
+                    value="#333333"
+                  />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="faq-card-color" class="form-label"
+                  >FAQ Card Color</label
+                >
+                <div class="color-input-container">
+                  <div class="color-preview" id="faq-card-color-preview"></div>
+                  <input
+                    type="color"
+                    id="faq-card-color"
+                    class="form-input"
+                    value="#ffffff"
+                  />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="contact-info-text-color" class="form-label"
+                  >Contact Info Text Color</label
+                >
+                <div class="color-input-container">
+                  <div
+                    class="color-preview"
+                    id="contact-info-text-color-preview"
+                  ></div>
+                  <input
+                    type="color"
+                    id="contact-info-text-color"
+                    class="form-input"
+                    value="#333333"
+                  />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="contact-info-card-color" class="form-label"
+                  >Contact Info Card Color</label
+                >
+                <div class="color-input-container">
+                  <div
+                    class="color-preview"
+                    id="contact-info-card-color-preview"
+                  ></div>
+                  <input
+                    type="color"
+                    id="contact-info-card-color"
+                    class="form-input"
+                    value="#ffffff"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                class="button primary-button"
+                id="save-appearance-button"
+              >
+                <span id="appearance-loading" class="loading hidden"></span>
+                <span id="appearance-button-text">Save Changes</span>
+              </button>
+            </form>
+          </div>
+        </section>
+
+        <!-- Gallery Section -->
+        <section id="gallery-section" class="section hidden">
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Gallery Images</h2>
+            </div>
+
+            <div class="gallery-grid" id="gallery-grid">
+              <!-- Gallery items will be loaded dynamically -->
+
+              <div class="add-image-card" id="add-gallery-image">
+                <i class="fas fa-plus add-image-icon"></i>
+                <span class="add-image-text">Add Image</span>
+                <input
+                  type="file"
+                  id="gallery-image-input"
+                  class="add-image-input"
+                  accept="image/*"
+                  multiple
+                />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Services Section -->
+        <section id="services-section" class="section hidden">
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Services</h2>
+            </div>
+
+            <div class="services-list" id="services-list">
+              <!-- Services will be loaded dynamically -->
+            </div>
+
+            <div class="add-service-form">
+              <h3 class="form-title">Add New Service</h3>
+              <form id="add-service-form">
+                <div class="form-group">
+                  <label for="service-title" class="form-label">Title</label>
+                  <input
+                    type="text"
+                    id="service-title"
+                    class="form-input"
+                    placeholder="Enter service title"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="service-description" class="form-label"
+                    >Description</label
+                  >
+                  <textarea
+                    id="service-description"
+                    class="form-textarea"
+                    placeholder="Enter service description"
+                  ></textarea>
+                </div>
+
+                <div class="form-group">
+                  <label for="service-icon" class="form-label">Icon</label>
+                  <input
+                    type="text"
+                    id="service-icon-search"
+                    class="form-input"
+                    placeholder="Search icons..."
+                    style="margin-bottom: 1rem"
+                  />
+
+                  <div class="icon-grid" id="service-icon-grid">
+                    <!-- Icons will be loaded dynamically -->
+                  </div>
+
+                  <input type="hidden" id="service-icon" value="code" />
+                </div>
+
+                <button
+                  type="submit"
+                  class="button primary-button"
+                  id="add-service-button"
+                >
+                  <span id="add-service-loading" class="loading hidden"></span>
+                  <span id="add-service-button-text">Add Service</span>
+                </button>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <!-- Products Section - NEW -->
+        <section id="products-section" class="section hidden">
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Products</h2>
+            </div>
+
+            <div class="products-list" id="products-list">
+              <!-- Products will be loaded dynamically -->
+            </div>
+
+            <div class="add-product-form">
+              <h3 class="form-title">Add New Product</h3>
+              <form id="add-product-form">
+                <div class="form-group">
+                  <label for="product-title" class="form-label">Title</label>
+                  <input
+                    type="text"
+                    id="product-title"
+                    class="form-input"
+                    placeholder="Enter product title"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="product-description" class="form-label"
+                    >Description</label
+                  >
+                  <textarea
+                    id="product-description"
+                    class="form-textarea"
+                    placeholder="Enter product description"
+                  ></textarea>
+                </div>
+
+                <div class="form-group">
+                  <label for="product-price" class="form-label">Price</label>
+                  <input
+                    type="text"
+                    id="product-price"
+                    class="form-input"
+                    placeholder="Enter product price (e.g. $99.99)"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="product-button-text" class="form-label"
+                    >Button Text</label
+                  >
+                  <input
+                    type="text"
+                    id="product-button-text"
+                    class="form-input"
+                    placeholder="Enter button text (e.g. Learn More, Buy Now)"
+                    value="Learn More"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="product-url" class="form-label"
+                    >Product URL (optional)</label
+                  >
+                  <input
+                    type="url"
+                    id="product-url"
+                    class="form-input"
+                    placeholder="Enter product URL"
+                  />
+                </div>
+
+                <div class="tabs">
+                  <div class="tab active" data-tab="product-image-tab">
+                    Image
+                  </div>
+                  <div class="tab" data-tab="product-icon-tab">Icon</div>
+                </div>
+
+                <div class="tab-content active" id="product-image-tab">
+                  <div class="form-group">
+                    <label for="product-image" class="form-label"
+                      >Product Image</label
+                    >
+                    <div class="image-upload-container">
+                      <img
+                        src="/placeholder.svg"
+                        alt="Product"
+                        class="image-preview"
+                        id="product-image-preview"
+                      />
+                      <div class="file-input-wrapper">
+                        <button type="button" class="button secondary-button">
+                          <i class="fas fa-upload button-icon"></i>
+                          Choose Image
+                        </button>
+                        <input
+                          type="file"
+                          id="product-image"
+                          class="file-input"
+                          accept="image/*"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="tab-content" id="product-icon-tab">
+                  <div class="form-group">
+                    <label for="product-icon" class="form-label">Icon</label>
+                    <input
+                      type="text"
+                      id="product-icon-search"
+                      class="form-input"
+                      placeholder="Search icons..."
+                      style="margin-bottom: 1rem"
+                    />
+
+                    <div class="icon-grid" id="product-icon-grid">
+                      <!-- Icons will be loaded dynamically -->
+                    </div>
+
+                    <input type="hidden" id="product-icon" value="box" />
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  class="button primary-button"
+                  id="add-product-button"
+                >
+                  <span id="add-product-loading" class="loading hidden"></span>
+                  <span id="add-product-button-text">Add Product</span>
+                </button>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <!-- Blog Section - NEW -->
+        <section id="blog-section" class="section hidden">
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Blog Posts</h2>
+            </div>
+
+            <div class="blog-posts-list" id="blog-posts-list">
+              <!-- Blog posts will be loaded dynamically -->
+            </div>
+
+            <div class="add-blog-post-form">
+              <h3 class="form-title">Add New Blog Post</h3>
+              <form id="add-blog-post-form">
+                <div class="form-group">
+                  <label for="blog-post-title" class="form-label">Title</label>
+                  <input
+                    type="text"
+                    id="blog-post-title"
+                    class="form-input"
+                    placeholder="Enter blog post title"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="blog-post-date" class="form-label">Date</label>
+                  <input
+                    type="text"
+                    id="blog-post-date"
+                    class="form-input"
+                    placeholder="Enter date (e.g. January 1, 2023)"
+                    value=""
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="blog-post-excerpt" class="form-label"
+                    >Excerpt (optional)</label
+                  >
+                  <textarea
+                    id="blog-post-excerpt"
+                    class="form-textarea"
+                    placeholder="Enter a short excerpt for the blog post"
+                    style="min-height: 80px"
+                  ></textarea>
+                </div>
+
+                <div class="form-group">
+                  <label for="blog-post-content" class="form-label"
+                    >Content</label
+                  >
+                  <textarea
+                    id="blog-post-content"
+                    class="form-textarea"
+                    placeholder="Enter blog post content"
+                  ></textarea>
+                </div>
+
+                <div class="form-group">
+                  <label for="blog-post-image" class="form-label"
+                    >Blog Post Image</label
+                  >
+                  <div class="image-upload-container">
+                    <img
+                      src="/placeholder.svg"
+                      alt="Blog Post"
+                      class="image-preview"
+                      id="blog-post-image-preview"
+                    />
+                    <div class="file-input-wrapper">
+                      <button type="button" class="button secondary-button">
+                        <i class="fas fa-upload button-icon"></i>
+                        Choose Image
+                      </button>
+                      <input
+                        type="file"
+                        id="blog-post-image"
+                        class="file-input"
+                        accept="image/*"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  class="button primary-button"
+                  id="add-blog-post-button"
+                >
+                  <span
+                    id="add-blog-post-loading"
+                    class="loading hidden"
+                  ></span>
+                  <span id="add-blog-post-button-text">Add Blog Post</span>
+                </button>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <!-- Links Section -->
+        <section id="links-section" class="section hidden">
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Social Links</h2>
+            </div>
+
+            <div class="links-list" id="links-list">
+              <!-- Links will be loaded dynamically -->
+            </div>
+
+            <div class="add-link-form">
+              <h3 class="form-title">Add New Link</h3>
+              <form id="add-link-form">
+                <div class="form-group">
+                  <label for="link-text" class="form-label">Link Text</label>
+                  <input
+                    type="text"
+                    id="link-text"
+                    class="form-input"
+                    placeholder="Enter link text"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="link-url" class="form-label">Link URL</label>
+                  <input
+                    type="url"
+                    id="link-url"
+                    class="form-input"
+                    placeholder="Enter link URL"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="link-icon" class="form-label">Icon</label>
+                  <select id="link-icon" class="form-select">
+                    <option value="link">Link</option>
+                    <option value="github">GitHub</option>
+                    <option value="linkedin">LinkedIn</option>
+                    <option value="twitter">Twitter</option>
+                    <option value="instagram">Instagram</option>
+                    <option value="facebook">Facebook</option>
+                    <option value="youtube">YouTube</option>
+                    <option value="twitch">Twitch</option>
+                    <option value="discord">Discord</option>
+                    <option value="telegram">Telegram</option>
+                    <option value="whatsapp">WhatsApp</option>
+                    <option value="tiktok">TikTok</option>
+                    <option value="pinterest">Pinterest</option>
+                    <option value="reddit">Reddit</option>
+                    <option value="snapchat">Snapchat</option>
+                    <option value="spotify">Spotify</option>
+                    <option value="dribbble">Dribbble</option>
+                    <option value="behance">Behance</option>
+                    <option value="medium">Medium</option>
+                    <option value="slack">Slack</option>
+                    <option value="mastodon">Mastodon</option>
+                    <option value="stack-overflow">StackOverflow</option>
+                    <option value="rss">RSS</option>
+                    <option value="paypal">PayPal</option>
+                    <option value="envelope">Email</option>
+                  </select>
+                </div>
+
+                <button
+                  type="submit"
+                  class="button primary-button"
+                  id="add-link-button"
+                >
+                  <span id="add-link-loading" class="loading hidden"></span>
+                  <span id="add-link-button-text">Add Link</span>
+                </button>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <!-- Contact Info Section -->
+        <section id="info-section" class="section hidden">
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Contact Information</h2>
+            </div>
+
+            <div class="contact-info-list" id="contact-info-list">
+              <!-- Contact info will be loaded dynamically -->
+            </div>
+
+            <div class="add-contact-info-form">
+              <h3 class="form-title">Add New Contact Information</h3>
+              <form id="add-contact-info-form">
+                <div class="form-group">
+                  <label for="contact-info-title" class="form-label"
+                    >Title</label
+                  >
+                  <input
+                    type="text"
+                    id="contact-info-title"
+                    class="form-input"
+                    placeholder="Enter title (e.g., Email, Phone, Address)"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="contact-info-value" class="form-label"
+                    >Value</label
+                  >
+                  <input
+                    type="text"
+                    id="contact-info-value"
+                    class="form-input"
+                    placeholder="Enter value"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="contact-info-type" class="form-label">Type</label>
+                  <select id="contact-info-type" class="form-select">
+                    <option value="text">Text</option>
+                    <option value="email">Email</option>
+                    <option value="phone">Phone</option>
+                    <option value="link">Link</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="contact-info-icon" class="form-label">Icon</label>
+                  <select id="contact-info-icon" class="form-select">
+                    <option value="envelope">Email</option>
+                    <option value="phone">Phone</option>
+                    <option value="map-marker-alt">Address</option>
+                    <option value="clock">Hours</option>
+                    <option value="globe">Website</option>
+                    <option value="building">Office</option>
+                    <option value="fax">Fax</option>
+                    <option value="id-card">Contact</option>
+                    <option value="users">Team</option>
+                    <option value="calendar">Schedule</option>
+                  </select>
+                </div>
+
+                <button
+                  type="submit"
+                  class="button primary-button"
+                  id="add-contact-info-button"
+                >
+                  <span
+                    id="add-contact-info-loading"
+                    class="loading hidden"
+                  ></span>
+                  <span id="add-contact-info-button-text"
+                    >Add Contact Info</span
+                  >
+                </button>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section id="faq-section" class="section hidden">
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Frequently Asked Questions</h2>
+            </div>
+
+            <div class="faqs-list" id="faqs-list">
+              <!-- FAQs will be loaded dynamically -->
+            </div>
+
+            <div class="add-faq-form">
+              <h3 class="form-title">Add New FAQ</h3>
+              <form id="add-faq-form">
+                <div class="form-group">
+                  <label for="faq-question" class="form-label">Question</label>
+                  <input
+                    type="text"
+                    id="faq-question"
+                    class="form-input"
+                    placeholder="Enter question"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="faq-answer" class="form-label">Answer</label>
+                  <textarea
+                    id="faq-answer"
+                    class="form-textarea"
+                    placeholder="Enter answer"
+                  ></textarea>
+                </div>
+
+                <button
+                  type="submit"
+                  class="button primary-button"
+                  id="add-faq-button"
+                >
+                  <span id="add-faq-loading" class="loading hidden"></span>
+                  <span id="add-faq-button-text">Add FAQ</span>
+                </button>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact-section" class="section hidden">
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Contact Form Settings</h2>
+            </div>
+
+            <form id="contact-form">
+              <div class="form-group">
+                <label for="contact-email" class="form-label"
+                  >Contact Email</label
+                >
+                <input
+                  type="email"
+                  id="contact-email"
+                  class="form-input"
+                  placeholder="Enter contact email"
+                />
+                <small class="form-text"
+                  >Messages from the contact form will be sent to this email
+                  address.</small
+                >
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Show Contact Form</label>
+                <div style="display: flex; align-items: center">
+                  <label class="switch">
+                    <input type="checkbox" id="show-contact-form" checked />
+                    <span class="slider"></span>
+                  </label>
+                  <span style="margin-left: 1rem" id="contact-form-status">
+                    Enabled</span
+                  >
+                </div>
+                <small class="form-text"
+                  >Enable or disable the contact form on your profile
+                  page.</small
+                >
+              </div>
+
+              <button
+                type="submit"
+                class="button primary-button"
+                id="save-contact-button"
+              >
+                <span id="contact-loading" class="loading hidden"></span>
+                <span id="contact-button-text">Save Changes</span>
+              </button>
+            </form>
+          </div>
+        </section>
+
+        <!-- Section Order Section -->
+        <section id="order-section" class="section hidden">
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Section Order</h2>
+            </div>
+            <form id="order-form">
+              <div class="form-group">
+                <label for="section-order" class="form-label"
+                  >Order (comma separated section IDs)</label
+                >
+                <input
+                  type="text"
+                  id="section-order"
+                  class="form-input"
+                  placeholder="services-section,products-section,gallery-section,blog-section,faq-section,info-section,contact-section,custom-code-section"
+                />
+              </div>
+              <button
+                type="submit"
+                class="button primary-button"
+                id="save-order-button"
+              >
+                <span id="order-loading" class="loading hidden"></span>
+                <span id="order-button-text">Save Changes</span>
+              </button>
+            </form>
+          </div>
+        </section>
+
+        <!-- Custom Code Section -->
+        <section id="custom-code-section" class="section hidden">
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Custom Code</h2>
+            </div>
+            <form id="custom-code-form">
+              <div class="form-group">
+                <label for="custom-code" class="form-label">HTML/JS/CSS</label>
+                <textarea
+                  id="custom-code"
+                  class="form-textarea"
+                  placeholder="&lt;script&gt;console.log('hi')&lt;/script&gt;"
+                ></textarea>
+              </div>
+              <button
+                type="submit"
+                class="button primary-button"
+                id="save-custom-code-button"
+              >
+                <span id="custom-code-loading" class="loading hidden"></span>
+                <span id="custom-code-button-text">Save Changes</span>
+              </button>
+            </form>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+      <i class="notification-icon" id="notification-icon"></i>
+      <div class="notification-content">
+        <div class="notification-title" id="notification-title"></div>
+        <div class="notification-message" id="notification-message"></div>
+      </div>
+    </div>
+
+    <script>
+      // DOM Elements
+      const logoutButton = document.getElementById("logout-button");
+      const sidebarLinks = document.querySelectorAll(".sidebar-nav-link");
+      const sections = document.querySelectorAll(".section");
+      const notification = document.getElementById("notification");
+      const notificationIcon = document.getElementById("notification-icon");
+      const notificationTitle = document.getElementById("notification-title");
+      const notificationMessage = document.getElementById(
+        "notification-message"
+      );
+
+      // Profile Elements
+      const profileForm = document.getElementById("profile-form");
+      const profileImageInput = document.getElementById("profile-image");
+      const profileImagePreview = document.getElementById(
+        "profile-image-upload-preview"
+      );
+      const profileImageDisplay = document.getElementById(
+        "profile-image-preview"
+      );
+      const logoImageInput = document.getElementById("logo-image");
+      const logoPreview = document.getElementById("logo-preview");
+      const sidebarLogo = document.getElementById("sidebar-logo");
+      const nameInput = document.getElementById("name");
+      const descriptionInput = document.getElementById("description");
+      const profileNamePreview = document.getElementById(
+        "profile-name-preview"
+      );
+      const profileDescriptionPreview = document.getElementById(
+        "profile-description-preview"
+      );
+      const saveProfileButton = document.getElementById("save-profile-button");
+      const profileLoading = document.getElementById("profile-loading");
+      const profileButtonText = document.getElementById("profile-button-text");
+
+      // Section Titles Elements
+      const sectionTitlesForm = document.getElementById("section-titles-form");
+      const servicesSectionTitleInput = document.getElementById(
+        "services-section-title"
+      );
+      const productsSectionTitleInput = document.getElementById(
+        "products-section-title"
+      );
+      const blogSectionTitleInput =
+        document.getElementById("blog-section-title");
+      const gallerySectionTitleInput = document.getElementById(
+        "gallery-section-title"
+      );
+      const infoSectionTitleInput =
+        document.getElementById("info-section-title");
+      const faqSectionTitleInput = document.getElementById("faq-section-title");
+      const contactSectionTitleInput = document.getElementById(
+        "contact-section-title"
+      );
+      const saveTitlesButton = document.getElementById("save-titles-button");
+      const titlesLoading = document.getElementById("titles-loading");
+      const titlesButtonText = document.getElementById("titles-button-text");
+
+      // Appearance Elements
+      const appearanceForm = document.getElementById("appearance-form");
+      const backgroundColorInput = document.getElementById("background-color");
+      const textColorInput = document.getElementById("text-color");
+      const accentColorInput = document.getElementById("accent-color");
+      const galleryBgColorInput = document.getElementById("gallery-bg-color");
+      const servicesBgColorInput = document.getElementById("services-bg-color");
+      const servicesTextColorInput = document.getElementById(
+        "services-text-color"
+      );
+      const servicesCardColorInput = document.getElementById(
+        "services-card-color"
+      );
+      const productsBgColorInput = document.getElementById("products-bg-color");
+      const productsTextColorInput = document.getElementById(
+        "products-text-color"
+      );
+      const productsCardColorInput = document.getElementById(
+        "products-card-color"
+      );
+      const blogBgColorInput = document.getElementById("blog-bg-color");
+      const blogTextColorInput = document.getElementById("blog-text-color");
+      const blogCardColorInput = document.getElementById("blog-card-color");
+      const faqBgColorInput = document.getElementById("faq-bg-color");
+      const faqTextColorInput = document.getElementById("faq-text-color");
+      const faqCardColorInput = document.getElementById("faq-card-color");
+      const contactBgColorInput = document.getElementById("contact-bg-color");
+      const contactInfoTextColorInput = document.getElementById(
+        "contact-info-text-color"
+      );
+      const contactInfoCardColorInput = document.getElementById(
+        "contact-info-card-color"
+      );
+      const backgroundColorPreview = document.getElementById(
+        "background-color-preview"
+      );
+      const textColorPreview = document.getElementById("text-color-preview");
+      const accentColorPreview = document.getElementById(
+        "accent-color-preview"
+      );
+      const galleryBgColorPreview = document.getElementById(
+        "gallery-bg-color-preview"
+      );
+      const servicesBgColorPreview = document.getElementById(
+        "services-bg-color-preview"
+      );
+      const servicesTextColorPreview = document.getElementById(
+        "services-text-color-preview"
+      );
+      const servicesCardColorPreview = document.getElementById(
+        "services-card-color-preview"
+      );
+      const productsBgColorPreview = document.getElementById(
+        "products-bg-color-preview"
+      );
+      const productsTextColorPreview = document.getElementById(
+        "products-text-color-preview"
+      );
+      const productsCardColorPreview = document.getElementById(
+        "products-card-color-preview"
+      );
+      const blogBgColorPreview = document.getElementById(
+        "blog-bg-color-preview"
+      );
+      const blogTextColorPreview = document.getElementById(
+        "blog-text-color-preview"
+      );
+      const blogCardColorPreview = document.getElementById(
+        "blog-card-color-preview"
+      );
+      const faqBgColorPreview = document.getElementById("faq-bg-color-preview");
+      const faqTextColorPreview = document.getElementById(
+        "faq-text-color-preview"
+      );
+      const faqCardColorPreview = document.getElementById(
+        "faq-card-color-preview"
+      );
+      const contactBgColorPreview = document.getElementById(
+        "contact-bg-color-preview"
+      );
+      const contactInfoTextColorPreview = document.getElementById(
+        "contact-info-text-color-preview"
+      );
+      const contactInfoCardColorPreview = document.getElementById(
+        "contact-info-card-color-preview"
+      );
+      const saveAppearanceButton = document.getElementById(
+        "save-appearance-button"
+      );
+      const appearanceLoading = document.getElementById("appearance-loading");
+      const appearanceButtonText = document.getElementById(
+        "appearance-button-text"
+      );
+
+      // Gallery Elements
+      const galleryGrid = document.getElementById("gallery-grid");
+      const addGalleryImage = document.getElementById("add-gallery-image");
+      const galleryImageInput = document.getElementById("gallery-image-input");
+
+      // Services Elements
+      const servicesList = document.getElementById("services-list");
+      const addServiceForm = document.getElementById("add-service-form");
+      const serviceTitleInput = document.getElementById("service-title");
+      const serviceDescriptionInput = document.getElementById(
+        "service-description"
+      );
+      const serviceIconInput = document.getElementById("service-icon");
+      const serviceIconGrid = document.getElementById("service-icon-grid");
+      const serviceIconSearch = document.getElementById("service-icon-search");
+      const addServiceButton = document.getElementById("add-service-button");
+      const addServiceLoading = document.getElementById("add-service-loading");
+      const addServiceButtonText = document.getElementById(
+        "add-service-button-text"
+      );
+      let editServiceIndex = null;
+
+      // Products Elements - NEW
+      const productsList = document.getElementById("products-list");
+      const addProductForm = document.getElementById("add-product-form");
+      const productTitleInput = document.getElementById("product-title");
+      const productDescriptionInput = document.getElementById(
+        "product-description"
+      );
+      const productPriceInput = document.getElementById("product-price");
+      const productButtonTextInput = document.getElementById(
+        "product-button-text"
+      );
+      const productUrlInput = document.getElementById("product-url");
+      const productImageInput = document.getElementById("product-image");
+      const productImagePreview = document.getElementById(
+        "product-image-preview"
+      );
+      const productIconInput = document.getElementById("product-icon");
+      const productIconGrid = document.getElementById("product-icon-grid");
+      const productIconSearch = document.getElementById("product-icon-search");
+      const productTabs = document.querySelectorAll(".tab");
+      const productTabContents = document.querySelectorAll(".tab-content");
+      const addProductButton = document.getElementById("add-product-button");
+      const addProductLoading = document.getElementById("add-product-loading");
+      const addProductButtonText = document.getElementById(
+        "add-product-button-text"
+      );
+      let editProductIndex = null;
+
+      // Blog Elements - NEW
+      const blogPostsList = document.getElementById("blog-posts-list");
+      const addBlogPostForm = document.getElementById("add-blog-post-form");
+      const blogPostTitleInput = document.getElementById("blog-post-title");
+      const blogPostDateInput = document.getElementById("blog-post-date");
+      const blogPostExcerptInput = document.getElementById("blog-post-excerpt");
+      const blogPostContentInput = document.getElementById("blog-post-content");
+      const blogPostImageInput = document.getElementById("blog-post-image");
+      const blogPostImagePreview = document.getElementById(
+        "blog-post-image-preview"
+      );
+      const addBlogPostButton = document.getElementById("add-blog-post-button");
+      const addBlogPostLoading = document.getElementById(
+        "add-blog-post-loading"
+      );
+      const addBlogPostButtonText = document.getElementById(
+        "add-blog-post-button-text"
+      );
+      let editBlogPostIndex = null;
+
+      // Blocks Elements - NEW
+      const blocksList = document.getElementById("blocks-list");
+      const addBlockForm = document.getElementById("add-block-form");
+      const blockTitleInput = document.getElementById("block-title");
+      const blockTextInput = document.getElementById("block-text");
+      const blockButtonTextInput = document.getElementById("block-button-text");
+      const blockButtonUrlInput = document.getElementById("block-button-url");
+      const blockImageInput = document.getElementById("block-image");
+      const blockImagePreview = document.getElementById("block-image-preview");
+      const blockBgColorInput = document.getElementById("block-bg-color");
+      const blockTextColorInput = document.getElementById("block-text-color");
+      const addBlockButton = document.getElementById("add-block-button");
+      const addBlockLoading = document.getElementById("add-block-loading");
+      const addBlockButtonText = document.getElementById(
+        "add-block-button-text"
+      );
+      let editBlockIndex = null;
+
+      // Links Elements
+      const linksList = document.getElementById("links-list");
+      const addLinkForm = document.getElementById("add-link-form");
+      const linkTextInput = document.getElementById("link-text");
+      const linkUrlInput = document.getElementById("link-url");
+      const linkIconInput = document.getElementById("link-icon");
+      const addLinkButton = document.getElementById("add-link-button");
+      const addLinkLoading = document.getElementById("add-link-loading");
+      const addLinkButtonText = document.getElementById("add-link-button-text");
+      let editLinkIndex = null;
+
+      // Contact Info Elements
+      const contactInfoList = document.getElementById("contact-info-list");
+      const addContactInfoForm = document.getElementById(
+        "add-contact-info-form"
+      );
+      const contactInfoTitleInput =
+        document.getElementById("contact-info-title");
+      const contactInfoValueInput =
+        document.getElementById("contact-info-value");
+      const contactInfoTypeInput = document.getElementById("contact-info-type");
+      const contactInfoIconInput = document.getElementById("contact-info-icon");
+      const addContactInfoButton = document.getElementById(
+        "add-contact-info-button"
+      );
+      const addContactInfoLoading = document.getElementById(
+        "add-contact-info-loading"
+      );
+      const addContactInfoButtonText = document.getElementById(
+        "add-contact-info-button-text"
+      );
+      let editContactInfoIndex = null;
+
+      // FAQ Elements
+      const faqsList = document.getElementById("faqs-list");
+      const addFaqForm = document.getElementById("add-faq-form");
+      const faqQuestionInput = document.getElementById("faq-question");
+      const faqAnswerInput = document.getElementById("faq-answer");
+      const addFaqButton = document.getElementById("add-faq-button");
+      const addFaqLoading = document.getElementById("add-faq-loading");
+      const addFaqButtonText = document.getElementById("add-faq-button-text");
+      let editFaqIndex = null;
+
+      // Contact Elements
+      const contactForm = document.getElementById("contact-form");
+      const contactEmailInput = document.getElementById("contact-email");
+      const showContactFormToggle =
+        document.getElementById("show-contact-form");
+      const contactFormStatus = document.getElementById("contact-form-status");
+      const saveContactButton = document.getElementById("save-contact-button");
+      const contactLoading = document.getElementById("contact-loading");
+      const contactButtonText = document.getElementById("contact-button-text");
+
+      // Section Order Elements
+      const orderForm = document.getElementById("order-form");
+      const sectionOrderInput = document.getElementById("section-order");
+      const saveOrderButton = document.getElementById("save-order-button");
+      const orderLoading = document.getElementById("order-loading");
+      const orderButtonText = document.getElementById("order-button-text");
+
+      // Custom Code Elements
+      const customCodeForm = document.getElementById("custom-code-form");
+      const customCodeInput = document.getElementById("custom-code");
+      const saveCustomCodeButton = document.getElementById(
+        "save-custom-code-button"
+      );
+      const customCodeLoading = document.getElementById("custom-code-loading");
+      const customCodeButtonText = document.getElementById(
+        "custom-code-button-text"
+      );
+
+      // Service Icons List
+      const serviceIcons = [
+        "code",
+        "paint-brush",
+        "mobile",
+        "laptop",
+        "chart-line",
+        "bullhorn",
+        "camera",
+        "video",
+        "pencil-alt",
+        "search",
+        "star",
+        "cog",
+        "wrench",
+        "server",
+        "database",
+        "cloud",
+        "desktop",
+        "globe",
+        "shopping-cart",
+        "credit-card",
+        "dollar-sign",
+        "chart-bar",
+        "users",
+        "user-tie",
+        "handshake",
+        "comments",
+        "headset",
+        "phone",
+        "envelope",
+        "file-alt",
+        "file-code",
+        "file-image",
+        "file-video",
+        "file-audio",
+        "file-pdf",
+        "book",
+        "graduation-cap",
+        "university",
+        "briefcase",
+        "building",
+        "home",
+        "palette",
+        "brush",
+        "pen",
+        "pen-fancy",
+        "pen-nib",
+        "pencil-ruler",
+        "ruler",
+        "ruler-combined",
+        "compass",
+        "drafting-compass",
+        "crop",
+        "layer-group",
+        "object-group",
+        "object-ungroup",
+        "shapes",
+        "puzzle-piece",
+        "brain",
+        "lightbulb",
+        "rocket",
+        "atom",
+        "microscope",
+        "flask",
+        "heartbeat",
+        "heart",
+        "medkit",
+        "hospital",
+        "stethoscope",
+        "pills",
+        "dumbbell",
+        "running",
+        "bicycle",
+        "swimmer",
+        "futbol",
+        "basketball-ball",
+        "utensils",
+        "coffee",
+        "glass-martini",
+        "wine-glass",
+        "hamburger",
+        "pizza-slice",
+        "car",
+        "truck",
+        "plane",
+        "ship",
+        "train",
+        "subway",
+        "map-marker-alt",
+        "map",
+        "compass",
+        "route",
+        "directions",
+        "music",
+        "headphones",
+        "guitar",
+        "drum",
+        "microphone",
+        "podcast",
+        "photo-video",
+        "film",
+        "theater-masks",
+        "ticket-alt",
+        "gamepad",
+        "shield-alt",
+        "lock",
+        "key",
+        "fingerprint",
+        "user-shield",
+        "user-lock",
+        "sun",
+        "moon",
+        "cloud-sun",
+        "cloud-moon",
+        "cloud-rain",
+        "snowflake",
+        "temperature-high",
+        "temperature-low",
+        "wind",
+        "rainbow",
+        "box",
+        "gift",
+        "tag",
+        "tags",
+        "store",
+        "shopping-bag",
+        "tshirt",
+        "shoe-prints",
+        "hat-cowboy",
+        "glasses",
+        "ring",
+        "gem",
+        "watch",
+        "wordpress",
+        "react",
+        "node-js",
+        "angular",
+        "vuejs",
+      ];
+
+      // State
+      let profileData = {
+        name: "",
+        description: "",
+        profileImage: "",
+        logoImage: "",
+        backgroundColor: "#ffffff",
+        textColor: "#333333",
+        accentColor: "#4f46e5",
+        galleryBgColor: "#f9fafb",
+        servicesBgColor: "#ffffff",
+        productsBgColor: "#f9fafb",
+        blogBgColor: "#ffffff",
+        faqBgColor: "#ffffff",
+        contactBgColor: "#f9fafb",
+        servicesSectionTitle: "My Services",
+        productsSectionTitle: "My Products",
+        blogSectionTitle: "Latest Blog Posts",
+        gallerySectionTitle: "My Gallery",
+        infoSectionTitle: "Contact Information",
+        faqSectionTitle: "Frequently Asked Questions",
+        contactSectionTitle: "Contact Me",
+        showContactForm: true,
+        contactEmail: "",
+        links: [],
+        services: [],
+        products: [],
+        blogPosts: [],
+        contactInfo: [],
+        faqs: [],
+        blocks: [],
+        galleryImages: [],
+      };
+
+      // Check if user is logged in
+      function checkAuthStatus() {
+        const token = localStorage.getItem("authToken");
+        if (!token) {
+          // Redirect to login page
+          window.location.href = "/custom-web/login";
+        }
+
+        // Set auth header for all fetch requests
+        return token;
+      }
+
+      // Show notification
+      function showNotification(type, title, message) {
+        notification.className = "notification show " + type;
+
+        if (type === "success") {
+          notificationIcon.className = "fas fa-check-circle notification-icon";
+        } else if (type === "error") {
+          notificationIcon.className =
+            "fas fa-exclamation-circle notification-icon";
+        }
+
+        notificationTitle.textContent = title;
+        notificationMessage.textContent = message;
+
+        setTimeout(() => {
+          notification.className = "notification";
+        }, 3000);
+      }
+
+      // FIXED: Update color previews function
+      function updateColorPreviews(data) {
+        // Update all color preview elements with saved values
+        backgroundColorPreview.style.backgroundColor =
+          data.backgroundColor || "#ffffff";
+        textColorPreview.style.backgroundColor = data.textColor || "#333333";
+        accentColorPreview.style.backgroundColor =
+          data.accentColor || "#4f46e5";
+        galleryBgColorPreview.style.backgroundColor =
+          data.galleryBgColor || "#f9fafb";
+        servicesBgColorPreview.style.backgroundColor =
+          data.servicesBgColor || "#ffffff";
+        servicesTextColorPreview.style.backgroundColor =
+          data.servicesTextColor || "#333333";
+        servicesCardColorPreview.style.backgroundColor =
+          data.servicesCardColor || "#f9fafb";
+        productsBgColorPreview.style.backgroundColor =
+          data.productsBgColor || "#f9fafb";
+        productsTextColorPreview.style.backgroundColor =
+          data.productsTextColor || "#333333";
+        productsCardColorPreview.style.backgroundColor =
+          data.productsCardColor || "#ffffff";
+        blogBgColorPreview.style.backgroundColor =
+          data.blogBgColor || "#ffffff";
+        blogTextColorPreview.style.backgroundColor =
+          data.blogTextColor || "#333333";
+        blogCardColorPreview.style.backgroundColor =
+          data.blogCardColor || "#f9fafb";
+        faqBgColorPreview.style.backgroundColor = data.faqBgColor || "#ffffff";
+        faqTextColorPreview.style.backgroundColor =
+          data.faqTextColor || "#333333";
+        faqCardColorPreview.style.backgroundColor =
+          data.faqCardColor || "#ffffff";
+        contactBgColorPreview.style.backgroundColor =
+          data.contactBgColor || "#f9fafb";
+        contactInfoTextColorPreview.style.backgroundColor =
+          data.contactInfoTextColor || "#333333";
+        contactInfoCardColorPreview.style.backgroundColor =
+          data.contactInfoCardColor || "#ffffff";
+      }
+
+      // Initialize service icons
+      function initServiceIcons() {
+        serviceIconGrid.innerHTML = "";
+
+        const searchTerm = serviceIconSearch.value.toLowerCase();
+        const filteredIcons = searchTerm
+          ? serviceIcons.filter((icon) => icon.includes(searchTerm))
+          : serviceIcons;
+
+        filteredIcons.forEach((icon) => {
+          const iconItem = document.createElement("div");
+          iconItem.className = "icon-item";
+          iconItem.dataset.icon = icon;
+
+          if (icon === serviceIconInput.value) {
+            iconItem.classList.add("selected");
+          }
+
+          const iconPreview = document.createElement("div");
+          iconPreview.className = "icon-preview";
+          iconPreview.innerHTML = `<i class="fas fa-${icon}"></i>`;
+
+          const iconName = document.createElement("div");
+          iconName.className = "icon-name";
+          iconName.textContent = icon;
+
+          iconItem.appendChild(iconPreview);
+          iconItem.appendChild(iconName);
+
+          iconItem.addEventListener("click", () => {
+            // Remove selected class from all icons
+            document.querySelectorAll(".icon-item").forEach((item) => {
+              item.classList.remove("selected");
+            });
+
+            // Add selected class to clicked icon
+            iconItem.classList.add("selected");
+
+            // Update hidden input
+            serviceIconInput.value = icon;
+          });
+
+          serviceIconGrid.appendChild(iconItem);
+        });
+      }
+
+      // Initialize product icons
+      function initProductIcons() {
+        productIconGrid.innerHTML = "";
+
+        const searchTerm = productIconSearch.value.toLowerCase();
+        const filteredIcons = searchTerm
+          ? serviceIcons.filter((icon) => icon.includes(searchTerm))
+          : serviceIcons;
+
+        filteredIcons.forEach((icon) => {
+          const iconItem = document.createElement("div");
+          iconItem.className = "icon-item";
+          iconItem.dataset.icon = icon;
+
+          if (icon === productIconInput.value) {
+            iconItem.classList.add("selected");
+          }
+
+          const iconPreview = document.createElement("div");
+          iconPreview.className = "icon-preview";
+          iconPreview.innerHTML = `<i class="fas fa-${icon}"></i>`;
+
+          const iconName = document.createElement("div");
+          iconName.className = "icon-name";
+          iconName.textContent = icon;
+
+          iconItem.appendChild(iconPreview);
+          iconItem.appendChild(iconName);
+
+          iconItem.addEventListener("click", () => {
+            // Remove selected class from all icons
+            document.querySelectorAll(".icon-item").forEach((item) => {
+              item.classList.remove("selected");
+            });
+
+            // Add selected class to clicked icon
+            iconItem.classList.add("selected");
+
+            // Update hidden input
+            productIconInput.value = icon;
+          });
+
+          productIconGrid.appendChild(iconItem);
+        });
+      }
+
+      // Fetch profile data
+      async function fetchProfileData() {
+        try {
+          const token = checkAuthStatus();
+
+          const response = await fetch("/api/profile");
+
+          if (!response.ok) {
+            throw new Error("Failed to fetch profile data");
+          }
+
+          const data = await response.json();
+          profileData = data;
+
+          // Update UI with profile data
+          updateProfileUI(data);
+
+          return data;
+        } catch (error) {
+          console.error("Error fetching profile data:", error);
+          showNotification("error", "Error", "Failed to load profile data");
+        }
+      }
+
+      // Update profile UI
+      function updateProfileUI(data) {
+        // Profile section
+        nameInput.value = data.name || "";
+        descriptionInput.value = data.description || "";
+        profileImagePreview.src = data.profileImage || "/images/profile.jpg";
+        profileImageDisplay.src = data.profileImage || "/images/profile.jpg";
+        logoPreview.src = data.logoImage || "/images/logo.png";
+        sidebarLogo.src = data.profileImage || "/images/profile.jpg";
+        profileNamePreview.textContent = data.name || "John Doe";
+        profileDescriptionPreview.textContent =
+          data.description || "Welcome to my personal profile!";
+
+        // Section titles
+        servicesSectionTitleInput.value =
+          data.servicesSectionTitle || "My Services";
+        productsSectionTitleInput.value =
+          data.productsSectionTitle || "My Products";
+        blogSectionTitleInput.value =
+          data.blogSectionTitle || "Latest Blog Posts";
+        gallerySectionTitleInput.value =
+          data.gallerySectionTitle || "My Gallery";
+        infoSectionTitleInput.value =
+          data.infoSectionTitle || "Contact Information";
+        faqSectionTitleInput.value =
+          data.faqSectionTitle || "Frequently Asked Questions";
+        contactSectionTitleInput.value =
+          data.contactSectionTitle || "Contact Me";
+
+        // Appearance section
+        backgroundColorInput.value = data.backgroundColor || "#ffffff";
+        textColorInput.value = data.textColor || "#333333";
+        accentColorInput.value = data.accentColor || "#4f46e5";
+        galleryBgColorInput.value = data.galleryBgColor || "#f9fafb";
+        servicesBgColorInput.value = data.servicesBgColor || "#ffffff";
+        productsBgColorInput.value = data.productsBgColor || "#f9fafb";
+        blogBgColorInput.value = data.blogBgColor || "#ffffff";
+        faqBgColorInput.value = data.faqBgColor || "#ffffff";
+        contactBgColorInput.value = data.contactBgColor || "#f9fafb";
+        servicesTextColorInput.value = data.servicesTextColor || "#333333";
+        servicesCardColorInput.value = data.servicesCardColor || "#f9fafb";
+        productsTextColorInput.value = data.productsTextColor || "#333333";
+        productsCardColorInput.value = data.productsCardColor || "#ffffff";
+        blogTextColorInput.value = data.blogTextColor || "#333333";
+        blogCardColorInput.value = data.blogCardColor || "#f9fafb";
+        faqTextColorInput.value = data.faqTextColor || "#333333";
+        faqCardColorInput.value = data.faqCardColor || "#ffffff";
+        contactInfoTextColorInput.value =
+          data.contactInfoTextColor || "#333333";
+        contactInfoCardColorInput.value =
+          data.contactInfoCardColor || "#ffffff";
+
+        // FIXED: Update color previews with saved values
+        updateColorPreviews(data);
+
+        sectionOrderInput.value = (data.sectionOrder || []).join(",");
+        customCodeInput.value = data.customCode || "";
+
+        // Contact section
+        contactEmailInput.value = data.contactEmail || "";
+        showContactFormToggle.checked = data.showContactForm !== false;
+        contactFormStatus.textContent =
+          data.showContactForm !== false ? "Enabled" : "Disabled";
+
+        // Load links
+        loadLinks(data.links || []);
+
+        // Load services
+        loadServices(data.services || []);
+
+        // Load products
+        loadProducts(data.products || []);
+
+        // Load blog posts
+        loadBlogPosts(data.blogPosts || []);
+
+        // Load blocks
+        loadBlocks(data.blocks || []);
+
+        // Load contact info
+        loadContactInfo(data.contactInfo || []);
+
+        // Load FAQs
+        loadFaqs(data.faqs || []);
+
+        // Load gallery images
+        loadGalleryImages(data.galleryImages || []);
+      }
+
+      // Load links
+      function loadLinks(links) {
+        linksList.innerHTML = "";
+
+        if (links.length === 0) {
+          const emptyMessage = document.createElement("p");
+          emptyMessage.textContent = "No links added yet.";
+          emptyMessage.style.textAlign = "center";
+          emptyMessage.style.color = "#666";
+          emptyMessage.style.padding = "1rem";
+
+          linksList.appendChild(emptyMessage);
+          return;
+        }
+
+        links.forEach((link, index) => {
+          const linkItem = document.createElement("div");
+          linkItem.className = "link-item";
+
+          const linkInfo = document.createElement("div");
+          linkInfo.className = "link-info";
+
+          const linkIcon = document.createElement("div");
+          linkIcon.className = "link-icon";
+          linkIcon.innerHTML = `<i class="fab fa-${link.icon}"></i>`;
+
+          const linkContent = document.createElement("div");
+          linkContent.className = "link-content";
+
+          const linkText = document.createElement("div");
+          linkText.className = "link-text";
+          linkText.textContent = link.text;
+
+          const linkUrl = document.createElement("div");
+          linkUrl.className = "link-url";
+          linkUrl.textContent = link.url;
+
+          linkContent.appendChild(linkText);
+          linkContent.appendChild(linkUrl);
+
+          linkInfo.appendChild(linkIcon);
+          linkInfo.appendChild(linkContent);
+
+          const linkActions = document.createElement("div");
+          linkActions.className = "link-actions";
+
+          const editButton = document.createElement("button");
+          editButton.className = "button secondary-button";
+          editButton.innerHTML = '<i class="fas fa-edit"></i>';
+          editButton.addEventListener("click", () => editLink(index));
+
+          const deleteButton = document.createElement("button");
+          deleteButton.className = "button danger-button";
+          deleteButton.innerHTML = '<i class="fas fa-trash"></i>';
+          deleteButton.addEventListener("click", () => deleteLink(index));
+
+          linkActions.appendChild(editButton);
+          linkActions.appendChild(deleteButton);
+
+          linkItem.appendChild(linkInfo);
+          linkItem.appendChild(linkActions);
+
+          linksList.appendChild(linkItem);
+        });
+      }
+
+      // Load services
+      function loadServices(services) {
+        servicesList.innerHTML = "";
+
+        if (services.length === 0) {
+          const emptyMessage = document.createElement("p");
+          emptyMessage.textContent = "No services added yet.";
+          emptyMessage.style.textAlign = "center";
+          emptyMessage.style.color = "#666";
+          emptyMessage.style.padding = "1rem";
+
+          servicesList.appendChild(emptyMessage);
+          return;
+        }
+
+        services.forEach((service, index) => {
+          const serviceItem = document.createElement("div");
+          serviceItem.className = "service-item";
+
+          const serviceInfo = document.createElement("div");
+          serviceInfo.className = "service-info";
+
+          const serviceIcon = document.createElement("div");
+          serviceIcon.className = "service-icon";
+          serviceIcon.innerHTML = `<i class="fas fa-${service.icon}"></i>`;
+
+          const serviceContent = document.createElement("div");
+          serviceContent.className = "service-content";
+
+          const serviceTitle = document.createElement("div");
+          serviceTitle.className = "service-title";
+          serviceTitle.textContent = service.title;
+
+          const serviceDescription = document.createElement("div");
+          serviceDescription.className = "service-description";
+          serviceDescription.textContent = service.description;
+
+          serviceContent.appendChild(serviceTitle);
+          serviceContent.appendChild(serviceDescription);
+
+          serviceInfo.appendChild(serviceIcon);
+          serviceInfo.appendChild(serviceContent);
+
+          const serviceActions = document.createElement("div");
+          serviceActions.className = "service-actions";
+
+          const editButton = document.createElement("button");
+          editButton.className = "button secondary-button";
+          editButton.innerHTML = '<i class="fas fa-edit"></i>';
+          editButton.addEventListener("click", () => editService(index));
+
+          const deleteButton = document.createElement("button");
+          deleteButton.className = "button danger-button";
+          deleteButton.innerHTML = '<i class="fas fa-trash"></i>';
+          deleteButton.addEventListener("click", () => deleteService(index));
+
+          serviceActions.appendChild(editButton);
+          serviceActions.appendChild(deleteButton);
+
+          serviceItem.appendChild(serviceInfo);
+          serviceItem.appendChild(serviceActions);
+
+          servicesList.appendChild(serviceItem);
+        });
+      }
+
+      // Load products - NEW
+      function loadProducts(products) {
+        productsList.innerHTML = "";
+
+        if (!products || products.length === 0) {
+          const emptyMessage = document.createElement("p");
+          emptyMessage.textContent = "No products added yet.";
+          emptyMessage.style.textAlign = "center";
+          emptyMessage.style.color = "#666";
+          emptyMessage.style.padding = "1rem";
+
+          productsList.appendChild(emptyMessage);
+          return;
+        }
+
+        products.forEach((product, index) => {
+          const productItem = document.createElement("div");
+          productItem.className = "product-item";
+
+          const productInfo = document.createElement("div");
+          productInfo.className = "product-info";
+
+          // Product image or icon
+          if (product.image) {
+            const productImage = document.createElement("img");
+            productImage.src = product.image;
+            productImage.alt = product.title;
+            productImage.className = "product-image-preview";
+            productInfo.appendChild(productImage);
+          } else if (product.icon) {
+            const productIcon = document.createElement("div");
+            productIcon.className = "product-icon";
+            productIcon.innerHTML = `<i class="fas fa-${product.icon}"></i>`;
+            productInfo.appendChild(productIcon);
+          }
+
+          const productContent = document.createElement("div");
+          productContent.className = "product-content";
+
+          const productTitle = document.createElement("div");
+          productTitle.className = "product-title";
+          productTitle.textContent = product.title;
+
+          const productDescription = document.createElement("div");
+          productDescription.className = "product-description";
+          productDescription.textContent = product.description;
+
+          const productPrice = document.createElement("div");
+          productPrice.className = "product-price";
+          productPrice.textContent = product.price;
+
+          productContent.appendChild(productTitle);
+          productContent.appendChild(productDescription);
+          productContent.appendChild(productPrice);
+
+          productInfo.appendChild(productContent);
+
+          const productActions = document.createElement("div");
+          productActions.className = "product-actions";
+
+          const editButton = document.createElement("button");
+          editButton.className = "button secondary-button";
+          editButton.innerHTML = '<i class="fas fa-edit"></i>';
+          editButton.addEventListener("click", () => editProduct(index));
+
+          const deleteButton = document.createElement("button");
+          deleteButton.className = "button danger-button";
+          deleteButton.innerHTML = '<i class="fas fa-trash"></i>';
+          deleteButton.addEventListener("click", () => deleteProduct(index));
+
+          productActions.appendChild(editButton);
+          productActions.appendChild(deleteButton);
+
+          productItem.appendChild(productInfo);
+          productItem.appendChild(productActions);
+
+          productsList.appendChild(productItem);
+        });
+      }
+
+      // Load blog posts - NEW
+      function loadBlogPosts(posts) {
+        blogPostsList.innerHTML = "";
+
+        if (!posts || posts.length === 0) {
+          const emptyMessage = document.createElement("p");
+          emptyMessage.textContent = "No blog posts added yet.";
+          emptyMessage.style.textAlign = "center";
+          emptyMessage.style.color = "#666";
+          emptyMessage.style.padding = "1rem";
+
+          blogPostsList.appendChild(emptyMessage);
+          return;
+        }
+
+        posts.forEach((post, index) => {
+          const blogPostItem = document.createElement("div");
+          blogPostItem.className = "blog-post-item";
+
+          const blogPostInfo = document.createElement("div");
+          blogPostInfo.className = "blog-post-info";
+
+          if (post.image) {
+            const blogPostImage = document.createElement("img");
+            blogPostImage.src = post.image;
+            blogPostImage.alt = post.title;
+            blogPostImage.className = "blog-post-image-preview";
+            blogPostInfo.appendChild(blogPostImage);
+          } else {
+            const blogPostIcon = document.createElement("div");
+            blogPostIcon.className = "blog-post-icon";
+            blogPostIcon.innerHTML = `<i class="fas fa-blog"></i>`;
+            blogPostInfo.appendChild(blogPostIcon);
+          }
+
+          const blogPostContent = document.createElement("div");
+          blogPostContent.className = "blog-post-content";
+
+          const blogPostTitle = document.createElement("div");
+          blogPostTitle.className = "blog-post-title";
+          blogPostTitle.textContent = post.title;
+
+          const blogPostDate = document.createElement("div");
+          blogPostDate.className = "blog-post-date";
+          blogPostDate.textContent = post.date;
+
+          const blogPostExcerpt = document.createElement("div");
+          blogPostExcerpt.className = "blog-post-content-preview";
+          blogPostExcerpt.textContent =
+            post.excerpt || post.content.substring(0, 100) + "...";
+
+          blogPostContent.appendChild(blogPostTitle);
+          blogPostContent.appendChild(blogPostDate);
+          blogPostContent.appendChild(blogPostExcerpt);
+
+          blogPostInfo.appendChild(blogPostContent);
+
+          const blogPostActions = document.createElement("div");
+          blogPostActions.className = "blog-post-actions";
+
+          const editButton = document.createElement("button");
+          editButton.className = "button secondary-button";
+          editButton.innerHTML = '<i class="fas fa-edit"></i>';
+          editButton.addEventListener("click", () => editBlogPost(index));
+
+          const deleteButton = document.createElement("button");
+          deleteButton.className = "button danger-button";
+          deleteButton.innerHTML = '<i class="fas fa-trash"></i>';
+          deleteButton.addEventListener("click", () => deleteBlogPost(index));
+
+          blogPostActions.appendChild(editButton);
+          blogPostActions.appendChild(deleteButton);
+
+          blogPostItem.appendChild(blogPostInfo);
+          blogPostItem.appendChild(blogPostActions);
+
+          blogPostsList.appendChild(blogPostItem);
+        });
+      }
+
+      // Load blocks - NEW
+      function loadBlocks(blocks) {
+        blocksList.innerHTML = "";
+
+        if (!blocks || blocks.length === 0) {
+          const emptyMessage = document.createElement("p");
+          emptyMessage.textContent = "No blocks added yet.";
+          emptyMessage.style.textAlign = "center";
+          emptyMessage.style.color = "#666";
+          emptyMessage.style.padding = "1rem";
+
+          blocksList.appendChild(emptyMessage);
+          return;
+        }
+
+        blocks.forEach((block, index) => {
+          const blockItem = document.createElement("div");
+          blockItem.className = "block-item";
+
+          const blockInfo = document.createElement("div");
+          blockInfo.className = "block-info";
+
+          const blockTitle = document.createElement("div");
+          blockTitle.className = "block-title";
+          blockTitle.textContent = block.title;
+
+          blockInfo.appendChild(blockTitle);
+
+          const blockActions = document.createElement("div");
+          blockActions.className = "block-actions";
+
+          const editButton = document.createElement("button");
+          editButton.className = "button secondary-button";
+          editButton.innerHTML = '<i class="fas fa-edit"></i>';
+          editButton.addEventListener("click", () => editBlock(index));
+
+          const deleteButton = document.createElement("button");
+          deleteButton.className = "button danger-button";
+          deleteButton.innerHTML = '<i class="fas fa-trash"></i>';
+          deleteButton.addEventListener("click", () => deleteBlock(index));
+
+          blockActions.appendChild(editButton);
+          blockActions.appendChild(deleteButton);
+
+          blockItem.appendChild(blockInfo);
+          blockItem.appendChild(blockActions);
+
+          blocksList.appendChild(blockItem);
+        });
+      }
+
+      // Load contact info
+      function loadContactInfo(contactInfo) {
+        contactInfoList.innerHTML = "";
+
+        if (contactInfo.length === 0) {
+          const emptyMessage = document.createElement("p");
+          emptyMessage.textContent = "No contact information added yet.";
+          emptyMessage.style.textAlign = "center";
+          emptyMessage.style.color = "#666";
+          emptyMessage.style.padding = "1rem";
+
+          contactInfoList.appendChild(emptyMessage);
+          return;
+        }
+
+        contactInfo.forEach((info, index) => {
+          const contactInfoItem = document.createElement("div");
+          contactInfoItem.className = "contact-info-item";
+
+          const contactInfoInfo = document.createElement("div");
+          contactInfoInfo.className = "contact-info-info";
+
+          const contactInfoIcon = document.createElement("div");
+          contactInfoIcon.className = "contact-info-icon";
+          contactInfoIcon.innerHTML = `<i class="fas fa-${info.icon}"></i>`;
+
+          const contactInfoContent = document.createElement("div");
+          contactInfoContent.className = "contact-info-content";
+
+          const contactInfoTitle = document.createElement("div");
+          contactInfoTitle.className = "contact-info-title";
+          contactInfoTitle.textContent = info.title;
+
+          const contactInfoValue = document.createElement("div");
+          contactInfoValue.className = "contact-info-value";
+          contactInfoValue.textContent = info.value;
+
+          contactInfoContent.appendChild(contactInfoTitle);
+          contactInfoContent.appendChild(contactInfoValue);
+
+          contactInfoInfo.appendChild(contactInfoIcon);
+          contactInfoInfo.appendChild(contactInfoContent);
+
+          const contactInfoActions = document.createElement("div");
+          contactInfoActions.className = "contact-info-actions";
+
+          const editButton = document.createElement("button");
+          editButton.className = "button secondary-button";
+          editButton.innerHTML = '<i class="fas fa-edit"></i>';
+          editButton.addEventListener("click", () => editContactInfo(index));
+
+          const deleteButton = document.createElement("button");
+          deleteButton.className = "button danger-button";
+          deleteButton.innerHTML = '<i class="fas fa-trash"></i>';
+          deleteButton.addEventListener("click", () =>
+            deleteContactInfo(index)
+          );
+
+          contactInfoActions.appendChild(editButton);
+          contactInfoActions.appendChild(deleteButton);
+
+          contactInfoItem.appendChild(contactInfoInfo);
+          contactInfoItem.appendChild(contactInfoActions);
+
+          contactInfoList.appendChild(contactInfoItem);
+        });
+      }
+
+      // Load FAQs
+      function loadFaqs(faqs) {
+        faqsList.innerHTML = "";
+
+        if (faqs.length === 0) {
+          const emptyMessage = document.createElement("p");
+          emptyMessage.textContent = "No FAQs added yet.";
+          emptyMessage.style.textAlign = "center";
+          emptyMessage.style.color = "#666";
+          emptyMessage.style.padding = "1rem";
+
+          faqsList.appendChild(emptyMessage);
+          return;
+        }
+
+        faqs.forEach((faq, index) => {
+          const faqItem = document.createElement("div");
+          faqItem.className = "faq-item";
+
+          const faqInfo = document.createElement("div");
+          faqInfo.className = "faq-info";
+
+          const faqIcon = document.createElement("div");
+          faqIcon.className = "faq-icon";
+          faqIcon.innerHTML = `<i class="fas fa-question-circle"></i>`;
+
+          const faqContent = document.createElement("div");
+          faqContent.className = "faq-content";
+
+          const faqQuestion = document.createElement("div");
+          faqQuestion.className = "faq-question";
+          faqQuestion.textContent = faq.question;
+
+          const faqAnswer = document.createElement("div");
+          faqAnswer.className = "faq-answer";
+          faqAnswer.textContent = faq.answer;
+
+          faqContent.appendChild(faqQuestion);
+          faqContent.appendChild(faqAnswer);
+
+          faqInfo.appendChild(faqIcon);
+          faqInfo.appendChild(faqContent);
+
+          const faqActions = document.createElement("div");
+          faqActions.className = "faq-actions";
+
+          const editButton = document.createElement("button");
+          editButton.className = "button secondary-button";
+          editButton.innerHTML = '<i class="fas fa-edit"></i>';
+          editButton.addEventListener("click", () => editFaq(index));
+
+          const deleteButton = document.createElement("button");
+          deleteButton.className = "button danger-button";
+          deleteButton.innerHTML = '<i class="fas fa-trash"></i>';
+          deleteButton.addEventListener("click", () => deleteFaq(index));
+
+          faqActions.appendChild(editButton);
+          faqActions.appendChild(deleteButton);
+
+          faqItem.appendChild(faqInfo);
+          faqItem.appendChild(faqActions);
+
+          faqsList.appendChild(faqItem);
+        });
+      }
+
+      // Load gallery images
+      function loadGalleryImages(images) {
+        // Clear gallery grid except for the add image card
+        const addImageCard = document.getElementById("add-gallery-image");
+        galleryGrid.innerHTML = "";
+        galleryGrid.appendChild(addImageCard);
+
+        if (images.length === 0) {
+          const emptyMessage = document.createElement("p");
+          emptyMessage.textContent = "No gallery images added yet.";
+          emptyMessage.style.textAlign = "center";
+          emptyMessage.style.color = "#666";
+          emptyMessage.style.padding = "1rem";
+          emptyMessage.style.gridColumn = "1 / -1";
+
+          galleryGrid.insertBefore(emptyMessage, addImageCard);
+          return;
+        }
+
+        images.forEach((image, index) => {
+          const galleryItem = document.createElement("div");
+          galleryItem.className = "gallery-item";
+
+          const galleryImage = document.createElement("img");
+          galleryImage.src = image;
+          galleryImage.alt = "Gallery Image";
+          galleryImage.className = "gallery-image";
+
+          const galleryItemActions = document.createElement("div");
+          galleryItemActions.className = "gallery-item-actions";
+
+          const deleteButton = document.createElement("button");
+          deleteButton.className = "gallery-item-button delete";
+          deleteButton.innerHTML = '<i class="fas fa-trash"></i>';
+          deleteButton.addEventListener("click", () =>
+            deleteGalleryImage(index)
+          );
+
+          galleryItemActions.appendChild(deleteButton);
+
+          galleryItem.appendChild(galleryImage);
+          galleryItem.appendChild(galleryItemActions);
+
+          galleryGrid.insertBefore(galleryItem, addImageCard);
+        });
+      }
+
+      // Delete link
+      async function deleteLink(index) {
+        if (!confirm("Are you sure you want to delete this link?")) return;
+        try {
+          const token = checkAuthStatus();
+
+          const response = await fetch(`/api/links/${index}`, {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to delete link");
+          }
+
+          const data = await response.json();
+          profileData = data.profile;
+
+          // Update UI
+          loadLinks(profileData.links || []);
+
+          showNotification("success", "Success", "Link deleted successfully");
+        } catch (error) {
+          console.error("Error deleting link:", error);
+          showNotification("error", "Error", "Failed to delete link");
+        }
+      }
+
+      function editLink(index) {
+        const link = profileData.links[index];
+        linkTextInput.value = link.text;
+        linkUrlInput.value = link.url;
+        linkIconInput.value = link.icon;
+        editLinkIndex = index;
+        addLinkButtonText.textContent = "Update Link";
+      }
+
+      // Delete service
+      async function deleteService(index) {
+        if (!confirm("Are you sure you want to delete this service?")) return;
+        try {
+          const token = checkAuthStatus();
+
+          const response = await fetch(`/api/services/${index}`, {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to delete service");
+          }
+
+          const data = await response.json();
+          profileData = data.profile;
+
+          // Update UI
+          loadServices(profileData.services || []);
+
+          showNotification(
+            "success",
+            "Success",
+            "Service deleted successfully"
+          );
+        } catch (error) {
+          console.error("Error deleting service:", error);
+          showNotification("error", "Error", "Failed to delete service");
+        }
+      }
+
+      function editService(index) {
+        const service = profileData.services[index];
+        serviceTitleInput.value = service.title;
+        serviceDescriptionInput.value = service.description;
+        serviceIconInput.value = service.icon;
+        editServiceIndex = index;
+        addServiceButtonText.textContent = "Update Service";
+      }
+
+      // Delete product - NEW
+      async function deleteProduct(index) {
+        if (!confirm("Are you sure you want to delete this product?")) return;
+        try {
+          const token = checkAuthStatus();
+
+          const response = await fetch(`/api/products/${index}`, {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to delete product");
+          }
+
+          const data = await response.json();
+          profileData = data.profile;
+
+          // Update UI
+          loadProducts(profileData.products || []);
+
+          showNotification(
+            "success",
+            "Success",
+            "Product deleted successfully"
+          );
+        } catch (error) {
+          console.error("Error deleting product:", error);
+          showNotification("error", "Error", "Failed to delete product");
+        }
+      }
+
+      function editProduct(index) {
+        const product = profileData.products[index];
+        productTitleInput.value = product.title;
+        productDescriptionInput.value = product.description;
+        productPriceInput.value = product.price;
+        productButtonTextInput.value = product.buttonText || "";
+        productUrlInput.value = product.url || "";
+        productIconInput.value = product.icon || "box";
+        productImagePreview.src = product.image || "/placeholder.svg";
+        editProductIndex = index;
+        addProductButtonText.textContent = "Update Product";
+      }
+
+      // Delete blog post - NEW
+      async function deleteBlogPost(index) {
+        if (!confirm("Are you sure you want to delete this blog post?")) return;
+        try {
+          const token = checkAuthStatus();
+
+          const response = await fetch(`/api/blogPosts/${index}`, {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to delete blog post");
+          }
+
+          const data = await response.json();
+          profileData = data.profile;
+
+          // Update UI
+          loadBlogPosts(profileData.blogPosts || []);
+
+          showNotification(
+            "success",
+            "Success",
+            "Blog post deleted successfully"
+          );
+        } catch (error) {
+          console.error("Error deleting blog post:", error);
+          showNotification("error", "Error", "Failed to delete blog post");
+        }
+      }
+
+      function editBlogPost(index) {
+        const post = profileData.blogPosts[index];
+        blogPostTitleInput.value = post.title;
+        blogPostDateInput.value = post.date;
+        blogPostExcerptInput.value = post.excerpt || "";
+        blogPostContentInput.value = post.content;
+        blogPostImagePreview.src = post.image || "/placeholder.svg";
+        editBlogPostIndex = index;
+        addBlogPostButtonText.textContent = "Update Blog Post";
+      }
+
+      // Delete contact info
+      async function deleteContactInfo(index) {
+        if (!confirm("Are you sure you want to delete this contact info?"))
+          return;
+        try {
+          const token = checkAuthStatus();
+
+          const response = await fetch(`/api/contactInfo/${index}`, {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to delete contact info");
+          }
+
+          const data = await response.json();
+          profileData = data.profile;
+
+          // Update UI
+          loadContactInfo(profileData.contactInfo || []);
+
+          showNotification(
+            "success",
+            "Success",
+            "Contact info deleted successfully"
+          );
+        } catch (error) {
+          console.error("Error deleting contact info:", error);
+          showNotification("error", "Error", "Failed to delete contact info");
+        }
+      }
+
+      function editContactInfo(index) {
+        const info = profileData.contactInfo[index];
+        contactInfoTitleInput.value = info.title;
+        contactInfoValueInput.value = info.value;
+        contactInfoTypeInput.value = info.type;
+        contactInfoIconInput.value = info.icon;
+        editContactInfoIndex = index;
+        addContactInfoButtonText.textContent = "Update Contact Info";
+      }
+
+      // Delete FAQ
+      async function deleteFaq(index) {
+        if (!confirm("Are you sure you want to delete this FAQ?")) return;
+        try {
+          const token = checkAuthStatus();
+
+          const response = await fetch(`/api/faqs/${index}`, {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to delete FAQ");
+          }
+
+          const data = await response.json();
+          profileData = data.profile;
+
+          // Update UI
+          loadFaqs(profileData.faqs || []);
+
+          showNotification("success", "Success", "FAQ deleted successfully");
+        } catch (error) {
+          console.error("Error deleting FAQ:", error);
+          showNotification("error", "Error", "Failed to delete FAQ");
+        }
+      }
+
+      function editFaq(index) {
+        const faq = profileData.faqs[index];
+        faqQuestionInput.value = faq.question;
+        faqAnswerInput.value = faq.answer;
+        editFaqIndex = index;
+        addFaqButtonText.textContent = "Update FAQ";
+      }
+
+      function editBlock(index) {
+        const block = profileData.blocks[index];
+        blockTitleInput.value = block.title;
+        blockTextInput.value = block.text;
+        blockButtonTextInput.value = block.buttonText || "";
+        blockButtonUrlInput.value = block.buttonUrl || "";
+        blockBgColorInput.value = block.bgColor || "#ffffff";
+        blockTextColorInput.value = block.textColor || "#333333";
+        blockImagePreview.src = block.image || "/placeholder.svg";
+        editBlockIndex = index;
+        addBlockButtonText.textContent = "Update Block";
+      }
+
+      async function deleteBlock(index) {
+        if (!confirm("Are you sure you want to delete this block?")) return;
+        try {
+          const token = checkAuthStatus();
+
+          const response = await fetch(`/api/blocks/${index}`, {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to delete block");
+          }
+
+          const data = await response.json();
+          profileData = data.profile;
+
+          loadBlocks(profileData.blocks || []);
+
+          showNotification("success", "Success", "Block deleted successfully");
+        } catch (error) {
+          console.error("Error deleting block:", error);
+          showNotification("error", "Error", "Failed to delete block");
+        }
+      }
+
+      // Delete gallery image
+      async function deleteGalleryImage(index) {
+        if (!confirm("Are you sure you want to delete this image?")) return;
+        try {
+          const token = checkAuthStatus();
+
+          const response = await fetch(`/api/gallery/${index}`, {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to delete gallery image");
+          }
+
+          const data = await response.json();
+          profileData = data.profile;
+
+          // Update UI
+          loadGalleryImages(profileData.galleryImages || []);
+
+          showNotification(
+            "success",
+            "Success",
+            "Gallery image deleted successfully"
+          );
+        } catch (error) {
+          console.error("Error deleting gallery image:", error);
+          showNotification("error", "Error", "Failed to delete gallery image");
+        }
+      }
+
+      // Event Listeners
+
+      // Navigation
+      sidebarLinks.forEach((link) => {
+        link.addEventListener("click", (e) => {
+          e.preventDefault();
+
+          // Remove active class from all links
+          sidebarLinks.forEach((link) => link.classList.remove("active"));
+
+          // Add active class to clicked link
+          link.classList.add("active");
+
+          // Hide all sections
+          sections.forEach((section) => section.classList.add("hidden"));
+
+          // Show selected section
+          const sectionId = link.dataset.section;
+          document.getElementById(sectionId).classList.remove("hidden");
+        });
+      });
+
+      // Product tabs
+      productTabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          // Remove active class from all tabs
+          productTabs.forEach((t) => t.classList.remove("active"));
+
+          // Add active class to clicked tab
+          tab.classList.add("active");
+
+          // Hide all tab contents
+          productTabContents.forEach((content) =>
+            content.classList.remove("active")
+          );
+
+          // Show selected tab content
+          const tabId = tab.dataset.tab;
+          document.getElementById(tabId).classList.add("active");
+        });
+      });
+
+      // Logout
+      logoutButton.addEventListener("click", () => {
+        localStorage.removeItem("authToken");
+        window.location.href = "/custom-web/login";
+      });
+
+      // Profile form
+      profileForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        try {
+          const token = checkAuthStatus();
+
+          // Show loading state
+          saveProfileButton.disabled = true;
+          profileLoading.classList.remove("hidden");
+          profileButtonText.textContent = "Saving...";
+
+          const formData = new FormData();
+          formData.append("name", nameInput.value);
+          formData.append("description", descriptionInput.value);
+
+          if (profileImageInput.files.length > 0) {
+            formData.append("profileImage", profileImageInput.files[0]);
+          }
+
+          const response = await fetch("/api/profile", {
+            method: "PUT",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            body: formData,
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to update profile");
+          }
+
+          const data = await response.json();
+          profileData = data.profile;
+
+          // Update UI
+          updateProfileUI(profileData);
+
+          showNotification(
+            "success",
+            "Success",
+            "Profile updated successfully"
+          );
+        } catch (error) {
+          console.error("Error updating profile:", error);
+          showNotification("error", "Error", "Failed to update profile");
+        } finally {
+          // Reset button state
+          saveProfileButton.disabled = false;
+          profileLoading.classList.add("hidden");
+          profileButtonText.textContent = "Save Changes";
+        }
+      });
+
+      // Logo form
+      logoImageInput.addEventListener("change", async (e) => {
+        if (logoImageInput.files.length > 0) {
+          try {
+            const token = checkAuthStatus();
+
+            const formData = new FormData();
+            formData.append("logoImage", logoImageInput.files[0]);
+
+            const response = await fetch("/api/logo", {
+              method: "PUT",
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+              body: formData,
+            });
+
+            if (!response.ok) {
+              throw new Error("Failed to update logo");
+            }
+
+            const data = await response.json();
+            profileData = data.profile;
+
+            // Update UI
+            logoPreview.src = profileData.logoImage;
+
+            showNotification("success", "Success", "Logo updated successfully");
+          } catch (error) {
+            console.error("Error updating logo:", error);
+            showNotification("error", "Error", "Failed to update logo");
+          }
+        }
+      });
+
+      // Section titles form
+      sectionTitlesForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        try {
+          const token = checkAuthStatus();
+
+          // Show loading state
+          saveTitlesButton.disabled = true;
+          titlesLoading.classList.remove("hidden");
+          titlesButtonText.textContent = "Saving...";
+
+          const response = await fetch("/api/profile", {
+            method: "PUT",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              servicesSectionTitle: servicesSectionTitleInput.value,
+              productsSectionTitle: productsSectionTitleInput.value,
+              blogSectionTitle: blogSectionTitleInput.value,
+              gallerySectionTitle: gallerySectionTitleInput.value,
+              infoSectionTitle: infoSectionTitleInput.value,
+              faqSectionTitle: faqSectionTitleInput.value,
+              contactSectionTitle: contactSectionTitleInput.value,
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to update section titles");
+          }
+
+          const data = await response.json();
+          profileData = data.profile;
+
+          showNotification(
+            "success",
+            "Success",
+            "Section titles updated successfully"
+          );
+        } catch (error) {
+          console.error("Error updating section titles:", error);
+          showNotification("error", "Error", "Failed to update section titles");
+        } finally {
+          // Reset button state
+          saveTitlesButton.disabled = false;
+          titlesLoading.classList.add("hidden");
+          titlesButtonText.textContent = "Save Changes";
+        }
+      });
+
+      // Appearance form
+      appearanceForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        try {
+          const token = checkAuthStatus();
+
+          // Show loading state
+          saveAppearanceButton.disabled = true;
+          appearanceLoading.classList.remove("hidden");
+          appearanceButtonText.textContent = "Saving...";
+
+          const response = await fetch("/api/profile", {
+            method: "PUT",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              backgroundColor: backgroundColorInput.value,
+              textColor: textColorInput.value,
+              accentColor: accentColorInput.value,
+              galleryBgColor: galleryBgColorInput.value,
+              servicesBgColor: servicesBgColorInput.value,
+              servicesTextColor: servicesTextColorInput.value,
+              servicesCardColor: servicesCardColorInput.value,
+              productsBgColor: productsBgColorInput.value,
+              productsTextColor: productsTextColorInput.value,
+              productsCardColor: productsCardColorInput.value,
+              blogBgColor: blogBgColorInput.value,
+              blogTextColor: blogTextColorInput.value,
+              blogCardColor: blogCardColorInput.value,
+              faqBgColor: faqBgColorInput.value,
+              faqTextColor: faqTextColorInput.value,
+              faqCardColor: faqCardColorInput.value,
+              contactBgColor: contactBgColorInput.value,
+              contactInfoTextColor: contactInfoTextColorInput.value,
+              contactInfoCardColor: contactInfoCardColorInput.value,
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to update appearance");
+          }
+
+          const data = await response.json();
+          profileData = data.profile;
+
+          showNotification(
+            "success",
+            "Success",
+            "Appearance updated successfully"
+          );
+        } catch (error) {
+          console.error("Error updating appearance:", error);
+          showNotification("error", "Error", "Failed to update appearance");
+        } finally {
+          // Reset button state
+          saveAppearanceButton.disabled = false;
+          appearanceLoading.classList.add("hidden");
+          appearanceButtonText.textContent = "Save Changes";
+        }
+      });
+
+      // Gallery image upload
+      galleryImageInput.addEventListener("change", async (e) => {
+        if (galleryImageInput.files.length > 0) {
+          try {
+            const token = checkAuthStatus();
+
+            const formData = new FormData();
+
+            for (let i = 0; i < galleryImageInput.files.length; i++) {
+              formData.append("images", galleryImageInput.files[i]);
+            }
+
+            const response = await fetch("/api/gallery", {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+              body: formData,
+            });
+
+            if (!response.ok) {
+              throw new Error("Failed to upload gallery images");
+            }
+
+            const data = await response.json();
+            profileData = data.profile;
+
+            // Update UI
+            loadGalleryImages(profileData.galleryImages || []);
+
+            showNotification(
+              "success",
+              "Success",
+              "Gallery images uploaded successfully"
+            );
+          } catch (error) {
+            console.error("Error uploading gallery images:", error);
+            showNotification(
+              "error",
+              "Error",
+              "Failed to upload gallery images"
+            );
+          } finally {
+            // Reset file input
+            galleryImageInput.value = "";
+          }
+        }
+      });
+
+      // Add/Edit service form
+      addServiceForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        try {
+          const token = checkAuthStatus();
+
+          // Show loading state
+          addServiceButton.disabled = true;
+          addServiceLoading.classList.remove("hidden");
+          addServiceButtonText.textContent =
+            editServiceIndex !== null ? "Updating..." : "Adding...";
+          const method = editServiceIndex !== null ? "PUT" : "POST";
+          const url =
+            editServiceIndex !== null
+              ? `/api/services/${editServiceIndex}`
+              : "/api/services";
+
+          const response = await fetch(url, {
+            method,
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              title: serviceTitleInput.value,
+              description: serviceDescriptionInput.value,
+              icon: serviceIconInput.value,
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to add service");
+          }
+
+          const data = await response.json();
+          profileData = data.profile;
+
+          // Update UI
+          loadServices(profileData.services || []);
+
+          // Reset form
+          serviceTitleInput.value = "";
+          serviceDescriptionInput.value = "";
+          editServiceIndex = null;
+          addServiceButtonText.textContent = "Add Service";
+
+          showNotification("success", "Success", "Service added successfully");
+        } catch (error) {
+          console.error("Error adding service:", error);
+          showNotification("error", "Error", "Failed to add service");
+        } finally {
+          // Reset button state
+          addServiceButton.disabled = false;
+          addServiceLoading.classList.add("hidden");
+          addServiceButtonText.textContent = "Add Service";
+        }
+      });
+
+      // Add/Edit product form - NEW
+      addProductForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        try {
+          const token = checkAuthStatus();
+
+          // Show loading state
+          addProductButton.disabled = true;
+          addProductLoading.classList.remove("hidden");
+          addProductButtonText.textContent =
+            editProductIndex !== null ? "Updating..." : "Adding...";
+
+          const formData = new FormData();
+          formData.append("title", productTitleInput.value);
+          formData.append("description", productDescriptionInput.value);
+          formData.append("price", productPriceInput.value);
+          formData.append("buttonText", productButtonTextInput.value);
+
+          if (productUrlInput.value) {
+            formData.append("url", productUrlInput.value);
+          }
+
+          // Check which tab is active
+          const isImageTab = document
+            .getElementById("product-image-tab")
+            .classList.contains("active");
+
+          if (isImageTab && productImageInput.files.length > 0) {
+            formData.append("productImage", productImageInput.files[0]);
+          } else {
+            formData.append("icon", productIconInput.value);
+          }
+
+          const method = editProductIndex !== null ? "PUT" : "POST";
+          const url =
+            editProductIndex !== null
+              ? `/api/products/${editProductIndex}`
+              : "/api/products";
+
+          const response = await fetch(url, {
+            method,
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            body: formData,
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to add product");
+          }
+
+          const data = await response.json();
+          profileData = data.profile;
+
+          // Update UI
+          loadProducts(profileData.products || []);
+
+          // Reset form
+          productTitleInput.value = "";
+          productDescriptionInput.value = "";
+          productPriceInput.value = "";
+          productButtonTextInput.value = "Learn More";
+          productUrlInput.value = "";
+          productImageInput.value = "";
+          productImagePreview.src = "/placeholder.svg";
+          productIconInput.value = "box";
+          editProductIndex = null;
+          addProductButtonText.textContent = "Add Product";
+
+          showNotification("success", "Success", "Product added successfully");
+        } catch (error) {
+          console.error("Error adding product:", error);
+          showNotification("error", "Error", "Failed to add product");
+        } finally {
+          // Reset button state
+          addProductButton.disabled = false;
+          addProductLoading.classList.add("hidden");
+          addProductButtonText.textContent = "Add Product";
+        }
+      });
+
+      // Add/Edit blog post form
+      addBlogPostForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        try {
+          const token = checkAuthStatus();
+
+          // Show loading state
+          addBlogPostButton.disabled = true;
+          addBlogPostLoading.classList.remove("hidden");
+          addBlogPostButtonText.textContent =
+            editBlogPostIndex !== null ? "Updating..." : "Adding...";
+
+          const formData = new FormData();
+          formData.append("title", blogPostTitleInput.value);
+          formData.append("date", blogPostDateInput.value);
+          formData.append("excerpt", blogPostExcerptInput.value);
+          formData.append("content", blogPostContentInput.value);
+
+          if (blogPostImageInput.files.length > 0) {
+            formData.append("image", blogPostImageInput.files[0]);
+          }
+
+          const method = editBlogPostIndex !== null ? "PUT" : "POST";
+          const url =
+            editBlogPostIndex !== null
+              ? `/api/blogPosts/${editBlogPostIndex}`
+              : "/api/blogPosts";
+
+          const response = await fetch(url, {
+            method,
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            body: formData,
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to add blog post");
+          }
+
+          const data = await response.json();
+          profileData = data.profile;
+
+          // Update UI
+          loadBlogPosts(profileData.blogPosts || []);
+
+          // Reset form
+          blogPostTitleInput.value = "";
+          blogPostDateInput.value = "";
+          blogPostExcerptInput.value = "";
+          blogPostContentInput.value = "";
+          blogPostImageInput.value = "";
+          blogPostImagePreview.src = "/placeholder.svg";
+          editBlogPostIndex = null;
+          addBlogPostButtonText.textContent = "Add Blog Post";
+
+          showNotification(
+            "success",
+            "Success",
+            "Blog post added successfully"
+          );
+        } catch (error) {
+          console.error("Error adding blog post:", error);
+          showNotification("error", "Error", "Failed to add blog post");
+        } finally {
+          // Reset button state
+          addBlogPostButton.disabled = false;
+          addBlogPostLoading.classList.add("hidden");
+          addBlogPostButtonText.textContent = "Add Blog Post";
+        }
+      });
+
+      // Add/Edit link form
+      addLinkForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        try {
+          const token = checkAuthStatus();
+
+          // Show loading state
+          addLinkButton.disabled = true;
+          addLinkLoading.classList.remove("hidden");
+          addLinkButtonText.textContent =
+            editLinkIndex !== null ? "Updating..." : "Adding...";
+
+          const method = editLinkIndex !== null ? "PUT" : "POST";
+          const url =
+            editLinkIndex !== null
+              ? `/api/links/${editLinkIndex}`
+              : "/api/links";
+
+          const response = await fetch(url, {
+            method,
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              text: linkTextInput.value,
+              url: linkUrlInput.value,
+              icon: linkIconInput.value,
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to add link");
+          }
+
+          const data = await response.json();
+          profileData = data.profile;
+
+          // Update UI
+          loadLinks(profileData.links || []);
+
+          // Reset form
+          linkTextInput.value = "";
+          linkUrlInput.value = "";
+          editLinkIndex = null;
+          addLinkButtonText.textContent = "Add Link";
+
+          showNotification("success", "Success", "Link added successfully");
+        } catch (error) {
+          console.error("Error adding link:", error);
+          showNotification("error", "Error", "Failed to add link");
+        } finally {
+          // Reset button state
+          addLinkButton.disabled = false;
+          addLinkLoading.classList.add("hidden");
+          addLinkButtonText.textContent = "Add Link";
+        }
+      });
+
+      // Add/Edit contact info form
+      addContactInfoForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        try {
+          const token = checkAuthStatus();
+
+          // Show loading state
+          addContactInfoButton.disabled = true;
+          addContactInfoLoading.classList.remove("hidden");
+          addContactInfoButtonText.textContent =
+            editContactInfoIndex !== null ? "Updating..." : "Adding...";
+
+          const method = editContactInfoIndex !== null ? "PUT" : "POST";
+          const url =
+            editContactInfoIndex !== null
+              ? `/api/contactInfo/${editContactInfoIndex}`
+              : "/api/contactInfo";
+
+          const response = await fetch(url, {
+            method,
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              title: contactInfoTitleInput.value,
+              value: contactInfoValueInput.value,
+              type: contactInfoTypeInput.value,
+              icon: contactInfoIconInput.value,
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to add contact info");
+          }
+
+          const data = await response.json();
+          profileData = data.profile;
+
+          // Update UI
+          loadContactInfo(profileData.contactInfo || []);
+
+          // Reset form
+          contactInfoTitleInput.value = "";
+          contactInfoValueInput.value = "";
+          editContactInfoIndex = null;
+          addContactInfoButtonText.textContent = "Add Contact Info";
+
+          showNotification(
+            "success",
+            "Success",
+            "Contact info added successfully"
+          );
+        } catch (error) {
+          console.error("Error adding contact info:", error);
+          showNotification("error", "Error", "Failed to add contact info");
+        } finally {
+          // Reset button state
+          addContactInfoButton.disabled = false;
+          addContactInfoLoading.classList.add("hidden");
+          addContactInfoButtonText.textContent = "Add Contact Info";
+        }
+      });
+
+      // Add/Edit FAQ form
+      addFaqForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        try {
+          const token = checkAuthStatus();
+
+          // Show loading state
+          addFaqButton.disabled = true;
+          addFaqLoading.classList.remove("hidden");
+          addFaqButtonText.textContent =
+            editFaqIndex !== null ? "Updating..." : "Adding...";
+
+          const method = editFaqIndex !== null ? "PUT" : "POST";
+          const url =
+            editFaqIndex !== null ? `/api/faqs/${editFaqIndex}` : "/api/faqs";
+
+          const response = await fetch(url, {
+            method,
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              question: faqQuestionInput.value,
+              answer: faqAnswerInput.value,
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to add FAQ");
+          }
+
+          const data = await response.json();
+          profileData = data.profile;
+
+          // Update UI
+          loadFaqs(profileData.faqs || []);
+
+          // Reset form
+          faqQuestionInput.value = "";
+          faqAnswerInput.value = "";
+          editFaqIndex = null;
+          addFaqButtonText.textContent = "Add FAQ";
+
+          showNotification("success", "Success", "FAQ added successfully");
+        } catch (error) {
+          console.error("Error adding FAQ:", error);
+          showNotification("error", "Error", "Failed to add FAQ");
+        } finally {
+          // Reset button state
+          addFaqButton.disabled = false;
+          addFaqLoading.classList.add("hidden");
+          addFaqButtonText.textContent = "Add FAQ";
+        }
+      });
+
+      // Add/Edit block form - NEW
+      addBlockForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        try {
+          const token = checkAuthStatus();
+
+          addBlockButton.disabled = true;
+          addBlockLoading.classList.remove("hidden");
+          addBlockButtonText.textContent =
+            editBlockIndex !== null ? "Updating..." : "Adding...";
+
+          const formData = new FormData();
+          formData.append("title", blockTitleInput.value);
+          formData.append("text", blockTextInput.value);
+          formData.append("buttonText", blockButtonTextInput.value);
+          formData.append("buttonUrl", blockButtonUrlInput.value);
+          formData.append("bgColor", blockBgColorInput.value);
+          formData.append("textColor", blockTextColorInput.value);
+          if (blockImageInput.files.length > 0) {
+            formData.append("blockImage", blockImageInput.files[0]);
+          }
+
+          const method = editBlockIndex !== null ? "PUT" : "POST";
+          const url =
+            editBlockIndex !== null
+              ? `/api/blocks/${editBlockIndex}`
+              : "/api/blocks";
+
+          const response = await fetch(url, {
+            method,
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            body: formData,
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to add block");
+          }
+
+          const data = await response.json();
+          profileData = data.profile;
+
+          loadBlocks(profileData.blocks || []);
+
+          blockTitleInput.value = "";
+          blockTextInput.value = "";
+          blockButtonTextInput.value = "";
+          blockButtonUrlInput.value = "";
+          blockBgColorInput.value = "#ffffff";
+          blockTextColorInput.value = "#333333";
+          blockImageInput.value = "";
+          blockImagePreview.src = "/placeholder.svg";
+          editBlockIndex = null;
+          addBlockButtonText.textContent = "Add Block";
+
+          showNotification("success", "Success", "Block saved successfully");
+        } catch (error) {
+          console.error("Error adding block:", error);
+          showNotification("error", "Error", "Failed to add block");
+        } finally {
+          addBlockButton.disabled = false;
+          addBlockLoading.classList.add("hidden");
+          addBlockButtonText.textContent = "Add Block";
+        }
+      });
+
+      // Contact form
+      contactForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        try {
+          const token = checkAuthStatus();
+
+          // Show loading state
+          saveContactButton.disabled = true;
+          contactLoading.classList.remove("hidden");
+          contactButtonText.textContent = "Saving...";
+
+          const response = await fetch("/api/profile", {
+            method: "PUT",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              contactEmail: contactEmailInput.value,
+              showContactForm: showContactFormToggle.checked,
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to update contact settings");
+          }
+
+          const data = await response.json();
+          profileData = data.profile;
+
+          // Update UI
+          contactFormStatus.textContent = showContactFormToggle.checked
+            ? "Enabled"
+            : "Disabled";
+
+          showNotification(
+            "success",
+            "Success",
+            "Contact settings updated successfully"
+          );
+        } catch (error) {
+          console.error("Error updating contact settings:", error);
+          showNotification(
+            "error",
+            "Error",
+            "Failed to update contact settings"
+          );
+        } finally {
+          // Reset button state
+          saveContactButton.disabled = false;
+          contactLoading.classList.add("hidden");
+          contactButtonText.textContent = "Save Changes";
+        }
+      });
+
+      // Section order form
+      orderForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        try {
+          const token = checkAuthStatus();
+
+          // Show loading state
+          saveOrderButton.disabled = true;
+          orderLoading.classList.remove("hidden");
+          orderButtonText.textContent = "Saving...";
+
+          const sectionOrder = sectionOrderInput.value
+            .split(",")
+            .map((s) => s.trim());
+
+          const response = await fetch("/api/profile", {
+            method: "PUT",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              sectionOrder: sectionOrder,
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to update section order");
+          }
+
+          const data = await response.json();
+          profileData = data.profile;
+
+          showNotification(
+            "success",
+            "Success",
+            "Section order updated successfully"
+          );
+        } catch (error) {
+          console.error("Error updating section order:", error);
+          showNotification("error", "Error", "Failed to update section order");
+        } finally {
+          // Reset button state
+          saveOrderButton.disabled = false;
+          orderLoading.classList.add("hidden");
+          orderButtonText.textContent = "Save Changes";
+        }
+      });
+
+      // Custom code form
+      customCodeForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        try {
+          const token = checkAuthStatus();
+
+          // Show loading state
+          saveCustomCodeButton.disabled = true;
+          customCodeLoading.classList.remove("hidden");
+          customCodeButtonText.textContent = "Saving...";
+
+          const response = await fetch("/api/profile", {
+            method: "PUT",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              customCode: customCodeInput.value,
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to update custom code");
+          }
+
+          const data = await response.json();
+          profileData = data.profile;
+
+          showNotification(
+            "success",
+            "Success",
+            "Custom code updated successfully"
+          );
+        } catch (error) {
+          console.error("Error updating custom code:", error);
+          showNotification("error", "Error", "Failed to update custom code");
+        } finally {
+          // Reset button state
+          saveCustomCodeButton.disabled = false;
+          customCodeLoading.classList.add("hidden");
+          customCodeButtonText.textContent = "Save Changes";
+        }
+      });
+
+      // Profile image input
+      profileImageInput.addEventListener("change", (e) => {
+        if (profileImageInput.files && profileImageInput.files[0]) {
+          const reader = new FileReader();
+
+          reader.onload = (e) => {
+            profileImagePreview.src = e.target.result;
+            profileImageDisplay.src = e.target.result;
+            sidebarLogo.src = e.target.result;
+          };
+
+          reader.readAsDataURL(profileImageInput.files[0]);
+        }
+      });
+
+      // Product image input
+      productImageInput.addEventListener("change", (e) => {
+        if (productImageInput.files && productImageInput.files[0]) {
+          const reader = new FileReader();
+
+          reader.onload = (e) => {
+            productImagePreview.src = e.target.result;
+          };
+
+          reader.readAsDataURL(productImageInput.files[0]);
+        }
+      });
+
+      // Blog post image input
+      blogPostImageInput.addEventListener("change", (e) => {
+        if (blogPostImageInput.files && blogPostImageInput.files[0]) {
+          const reader = new FileReader();
+
+          reader.onload = (e) => {
+            blogPostImagePreview.src = e.target.result;
+          };
+
+          reader.readAsDataURL(blogPostImageInput.files[0]);
+        }
+      });
+
+      // Block image input - NEW
+      blockImageInput.addEventListener("change", () => {
+        if (blockImageInput.files && blockImageInput.files[0]) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            blockImagePreview.src = e.target.result;
+          };
+          reader.readAsDataURL(blockImageInput.files[0]);
+        }
+      });
+
+      // Show contact form toggle
+      showContactFormToggle.addEventListener("change", () => {
+        contactFormStatus.textContent = showContactFormToggle.checked
+          ? "Enabled"
+          : "Disabled";
+      });
+
+      // Service icon search
+      serviceIconSearch.addEventListener("input", () => {
+        initServiceIcons();
+      });
+
+      // Product icon search
+      productIconSearch.addEventListener("input", () => {
+        initProductIcons();
+      });
+
+      // Color input listeners for real-time preview updates
+      backgroundColorInput.addEventListener("input", () => {
+        backgroundColorPreview.style.backgroundColor =
+          backgroundColorInput.value;
+      });
+
+      textColorInput.addEventListener("input", () => {
+        textColorPreview.style.backgroundColor = textColorInput.value;
+      });
+
+      accentColorInput.addEventListener("input", () => {
+        accentColorPreview.style.backgroundColor = accentColorInput.value;
+      });
+
+      galleryBgColorInput.addEventListener("input", () => {
+        galleryBgColorPreview.style.backgroundColor = galleryBgColorInput.value;
+      });
+
+      servicesBgColorInput.addEventListener("input", () => {
+        servicesBgColorPreview.style.backgroundColor =
+          servicesBgColorInput.value;
+      });
+
+      servicesTextColorInput.addEventListener("input", () => {
+        servicesTextColorPreview.style.backgroundColor =
+          servicesTextColorInput.value;
+      });
+
+      servicesCardColorInput.addEventListener("input", () => {
+        servicesCardColorPreview.style.backgroundColor =
+          servicesCardColorInput.value;
+      });
+
+      productsBgColorInput.addEventListener("input", () => {
+        productsBgColorPreview.style.backgroundColor =
+          productsBgColorInput.value;
+      });
+
+      productsTextColorInput.addEventListener("input", () => {
+        productsTextColorPreview.style.backgroundColor =
+          productsTextColorInput.value;
+      });
+
+      productsCardColorInput.addEventListener("input", () => {
+        productsCardColorPreview.style.backgroundColor =
+          productsCardColorInput.value;
+      });
+
+      blogBgColorInput.addEventListener("input", () => {
+        blogBgColorPreview.style.backgroundColor = blogBgColorInput.value;
+      });
+
+      blogTextColorInput.addEventListener("input", () => {
+        blogTextColorPreview.style.backgroundColor = blogTextColorInput.value;
+      });
+
+      blogCardColorInput.addEventListener("input", () => {
+        blogCardColorPreview.style.backgroundColor = blogCardColorInput.value;
+      });
+
+      faqBgColorInput.addEventListener("input", () => {
+        faqBgColorPreview.style.backgroundColor = faqBgColorInput.value;
+      });
+
+      faqTextColorInput.addEventListener("input", () => {
+        faqTextColorPreview.style.backgroundColor = faqTextColorInput.value;
+      });
+
+      faqCardColorInput.addEventListener("input", () => {
+        faqCardColorPreview.style.backgroundColor = faqCardColorInput.value;
+      });
+
+      contactBgColorInput.addEventListener("input", () => {
+        contactBgColorPreview.style.backgroundColor = contactBgColorInput.value;
+      });
+
+      contactInfoTextColorInput.addEventListener("input", () => {
+        contactInfoTextColorPreview.style.backgroundColor =
+          contactInfoTextColorInput.value;
+      });
+
+      contactInfoCardColorInput.addEventListener("input", () => {
+        contactInfoCardColorPreview.style.backgroundColor =
+          contactInfoCardColorInput.value;
+      });
+
+      // Auto-fill current date for blog posts
+      const today = new Date();
+      const monthNames = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+      ];
+      const currentDate = `${
+        monthNames[today.getMonth()]
+      } ${today.getDate()}, ${today.getFullYear()}`;
+      blogPostDateInput.value = currentDate;
+
+      // Initial load
+      document.addEventListener("DOMContentLoaded", () => {
+        checkAuthStatus();
+        fetchProfileData();
+        initServiceIcons();
+        initProductIcons();
+
+        // Set active class on first sidebar link
+        sidebarLinks[0].classList.add("active");
+
+        // Show first section
+        sections[0].classList.remove("hidden");
+      });
+    </script>
+  </body>
+</html>
